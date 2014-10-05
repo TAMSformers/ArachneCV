@@ -1,0 +1,10 @@
+/*
+ * Arachne CV
+ *
+ * Written by David Hashe and Jacob Brunson
+ *
+ *
+ */
+
+#define ArachneCV_VERSION_MAJOR @ArachneCV_VERSION_MAJOR@
+#define ArachneCV_VERSION_MINOR @ArachneCV_VERSION_MINOR@
