@@ -29,31 +29,22 @@ configure_file(
 include_directories( "${PROJECT_SOURCE_DIR}" )
 include_directories( "${PROJECT_BINARY_DIR}" )
 
-if( OUTPUT_NATIVE )
+IF( OUTPUT_NATIVE )
 
 add_library( ArachneCV
   camera_acv.cpp camera_acv.hpp
   camera_proxy.cpp camera_proxy.hpp
 )
 
-
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
-ELSE()
-target_link_libraries( ArachneCV
-  libopencv_core.so
-  libopencv_highgui.so
-  libopencv_imgproc.so
-)
-ENDIF()
 
 install( TARGETS ArachneCV DESTINATION bin )
 install( FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" camera_acv.hpp camera_proxy.hpp DESTINATION include )
 
-endif( OUTPUT_NATIVE )
+ENDIF( OUTPUT_NATIVE )
 
-if( OUTPUT_PYTHON )
+IF( OUTPUT_PYTHON )
 
 find_package( SWIG REQUIRED )
 include( ${SWIG_USE_FILE} )
@@ -73,4 +64,4 @@ swig_add_module( ArachneCV python ArachneCV.i
 )
 swig_link_libraries( ArachneCV ${PYTHON_LIBRARIES} )
 
-endif( OUTPUT_PYTHON )
+ENDIF( OUTPUT_PYTHON )
