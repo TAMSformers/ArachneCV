@@ -34,12 +34,17 @@ add_library( ArachneCV
   camera_proxy.cpp camera_proxy.hpp
 )
 
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 find_package(OpenCV REQUIRED)
-target_link_libraries(ArachneCV
-    opencv_core
-    opencv_imgproc
-    opencv_highgui
+target_link_libraries(ArachneCV ${OpenCV_LIBS})
+ELSE()
+target_link_libraries( ArachneCV
+  libopencv_core.so
+  libopencv_highgui.so
+  libopencv_imgproc.so
 )
+ENDIF()
 
 install( TARGETS ArachneCV DESTINATION bin )
 install( FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" camera_acv.hpp camera_proxy.hpp DESTINATION include )
