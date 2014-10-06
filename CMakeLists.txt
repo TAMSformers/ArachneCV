@@ -34,10 +34,11 @@ add_library( ArachneCV
   camera_proxy.cpp camera_proxy.hpp
 )
 
-target_link_libraries( ArachneCV
-  libopencv_core.so
-  libopencv_highgui.so
-  libopencv_imgproc.so
+find_package(OpenCV REQUIRED)
+target_link_libraries(ArachneCV
+    opencv_core
+    opencv_imgproc
+    opencv_highgui
 )
 
 install( TARGETS ArachneCV DESTINATION bin )
