@@ -46,22 +46,24 @@ ENDIF( OUTPUT_NATIVE )
 
 IF( OUTPUT_PYTHON )
 
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+
 find_package( SWIG REQUIRED )
 include( ${SWIG_USE_FILE} )
 
 find_package( PythonLibs )
 include_directories( ${PYTHON_INCLUDE_PATH} )
 
+find_package(OpenCV REQUIRED)
+include_directories( ${OpenCV_INCLUDE_PATH} )
+
 set( CMAKE_SWIG_FLAGS "" )
 
 set_source_files_properties( ArachneCV.i PROPERTIES CPLUSPLUS ON )
-set_source_files_properties( ArachneCV.i PROPERTIES SWIG_FLAGS "-includeall")
 swig_add_module( ArachneCV python ArachneCV.i
   camera_proxy.cpp
-  camera_proxy.hpp
   camera_acv.cpp
-  camera_acv.hpp
 )
-swig_link_libraries( ArachneCV ${PYTHON_LIBRARIES} )
+swig_link_libraries( ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES} )
 
 ENDIF( OUTPUT_PYTHON )
