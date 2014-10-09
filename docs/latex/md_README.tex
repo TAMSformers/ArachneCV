@@ -1,0 +1,43 @@
+\#\-Arachne\-C\-V
+
+Written by David Hashe and Jacob Brunson
+
+\subsection*{Introduction}
+
+Arachne\-C\-V is a Computer Vision library developed by F\-R\-C \#5212 T\-A\-M\-Sformers for use in the F\-I\-R\-S\-T Robotics Competition. It extends Open\-C\-V with a compact and well-\/documented A\-P\-I suitable for novice and expert programmers alike.
+
+Bindings are available to all languages supported by S\-W\-I\-G.
+
+\subsection*{Building Arachne\-C\-V}
+
+Arachne\-C\-V uses C\-Make, a popular cross-\/platform build system. As such, it may be built on Linux, Mac, and Windows.
+
+To build Arachne\-C\-V, first make sure that Open\-C\-V, S\-W\-I\-G, C\-Make, and a C++ compiler are present on your system.
+
+Next change into the Arachne\-C\-V directory and follow the instructions below.
+
+\paragraph*{Linux \& O\-S X}
+
+\begin{DoxyVerb}mkdir build
+cd build
+cmake ..
+make
+make install
+\end{DoxyVerb}
+
+
+\paragraph*{Windows\-:}
+
+{\itshape T\-O\-D\-O} Idk how Windows works.
+
+\subsection*{Developer Information}
+
+Arachne\-C\-V is designed with the intent of binding to arbitrary high-\/level languages to make it equally accessible to F\-R\-C teams of all language backgrounds. This is done through S\-W\-I\-G. However, because S\-W\-I\-G only supports the C++ Standard Library and not Open\-C\-V, proxy classes have been created to mediate between S\-W\-I\-G and Open\-C\-V. Internal classes and functions are prefixed \char`\"{}acv\char`\"{}, which proxy classes lack.
+
+Furthermore, all files relying on Open\-C\-V are suffixed \char`\"{}acv\char`\"{}, while all files containing proxy classes are suffixed \char`\"{}proxy\char`\"{}.
+
+Arachne\-C\-V documentation is generated through Doxygen.
+
+\subsection*{Name Explanation}
+
+In Greek mythology, Arachne was a talented and proud weaver who rivaled Athena in her abilities. Much like the spider Arachne was transformed into, Arachne\-C\-V works by creating and processing a \char`\"{}web\char`\"{} of camera inputs. Through this, it creates a beautiful and functional structure. 
