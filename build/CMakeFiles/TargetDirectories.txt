@@ -1,2 +1,0 @@
-/home/dhashe/src/tamsformers/ArachneCV/build/CMakeFiles/ArachneCV.dir
-/home/dhashe/src/tamsformers/ArachneCV/build/CMakeFiles/_ArachneCV.dir
