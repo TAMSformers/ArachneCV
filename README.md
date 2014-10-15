@@ -30,9 +30,9 @@ Next change into the ArachneCV directory and follow the instructions below.
 
 ##Developer Information
 
-ArachneCV is designed with the intent of binding to arbitrary high-level languages to make it equally accessible to FRC teams of all language backgrounds. This is done through SWIG. However, because SWIG only supports the C++ Standard Library and not OpenCV, proxy classes have been created to mediate between SWIG and OpenCV. Internal classes and functions are prefixed "acv", which proxy classes lack.
+ArachneCV is designed with the intent of binding to arbitrary high-level languages to make it equally accessible to FRC teams of all language backgrounds. This is done through SWIG. However, because SWIG only supports the C++ Standard Library and not OpenCV, proxy classes have been created to mediate between SWIG and OpenCV. These classes are specified in ArachneCV.cpp and ArachneCV.hpp.
 
-Furthermore, all files relying on OpenCV are suffixed "acv", while all files containing proxy classes are suffixed "proxy".
+Furthermore, all internal functions and classes are prefixed "acv".
 
 ArachneCV documentation is generated through Doxygen.
 

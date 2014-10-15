@@ -32,15 +32,15 @@ include_directories( "${PROJECT_BINARY_DIR}" )
 IF( OUTPUT_NATIVE )
 
 add_library( ArachneCV
-  camera_acv.cpp camera_acv.hpp
-  camera_proxy.cpp camera_proxy.hpp
+  ArachneCV.hpp ArachneCV.cpp
+  camera.hpp camera.cpp
 )
 
 find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
 
 install( TARGETS ArachneCV DESTINATION lib )
-install( FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" camera_acv.hpp camera_proxy.hpp DESTINATION include )
+install( FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" ArachneCV.hpp DESTINATION include )
 
 ENDIF( OUTPUT_NATIVE )
 
@@ -61,8 +61,8 @@ set( CMAKE_SWIG_FLAGS "" )
 
 set_source_files_properties( ArachneCV.i PROPERTIES CPLUSPLUS ON )
 swig_add_module( ArachneCV python ArachneCV.i
-  camera_proxy.cpp
-  camera_acv.cpp
+  ArachneCV.cpp
+  camera.cpp
 )
 swig_link_libraries( ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES} )
 
