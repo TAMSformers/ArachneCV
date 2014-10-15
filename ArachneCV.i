@@ -9,13 +9,14 @@
 %module ArachneCV
 
 %{
-#include "camera_proxy.hpp"
+#include "ArachneCV.hpp"
 %}
 
-%include "camera_proxy.hpp"
+%include "ArachneCV.hpp"
 
 %Camera::Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in );
 %Camera::GetFrame( );
 %Camera::WarpPerspective( );
+%Camera::ShowFrame( );
 %Camera::~Camera( );
 

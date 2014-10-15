@@ -9,10 +9,10 @@
  *
  */
 
-#include "camera_acv.hpp"
-#include "camera_proxy.hpp"
+#include "camera.hpp"
+#include "ArachneCV.hpp"
 
-//#include "ArachneCVConfig.h"
+#include "ArachneCVConfig.h"
 
 namespace acv{
 
@@ -36,6 +36,11 @@ void Camera::GetFrame( )
 void Camera::WarpPerspective( )
 {
   acv_camera->acvWarpPerspective( );
+}
+
+void Camera::ShowFrame( )
+{
+  acv_camera->acvShowFrame( );
 }
 
 Camera::~Camera( )

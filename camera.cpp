@@ -11,12 +11,13 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
 
 #include <opencv2/opencv.hpp>
 
-#include "camera_acv.hpp"
+#include "camera.hpp"
 
-//#include "ArachneCVConfig.h"
+#include "ArachneCVConfig.h"
 
 #define PI 3.14159265
 
@@ -24,6 +25,7 @@ namespace acv{
 
 acvCamera::acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in )
 {
+  cam_num = cam_num_in;
   cam_size.width = cam_size_in[ 0 ];
   cam_size.height = cam_size_in[ 1 ];
   cam_coords[ 0 ] = cam_coords_in[ 0 ];
@@ -38,8 +40,7 @@ acvCamera::acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2
 
 void acvCamera::acvGetFrame( )
 {
-  capture.grab( );
-  capture.retrieve( frame );
+  capture.read( frame );
 }
 
 void acvCamera::acvWarpPerspective( )
@@ -71,7 +72,7 @@ void acvCamera::acvWarpPerspective( )
     dst_pts[ 1 ] = D1;
     dst_pts[ 2 ] = D2;
     dst_pts[ 3 ] = D3;
-}
+  }
   else{
     int offset = ( cam_size.height * ( cam_size.width/2 ) ) / height;
     cv::Point2f D0( offset, height );
@@ -82,13 +83,19 @@ void acvCamera::acvWarpPerspective( )
     dst_pts[ 1 ] = D1;
     dst_pts[ 2 ] = D2;
     dst_pts[ 3 ] = D3;
-}
+  }
 
   /* generate transform matrix */
   cv::InputArray M = cv::getPerspectiveTransform( src_pts, dst_pts );
 
   /* apply transform matrix */
   cv::warpPerspective( frame, frame, M, cam_size );
+}
+
+void acvCamera::acvShowFrame( )
+{
+  /* TODO add camera name to window name */
+  cv::imshow( "Camera", frame );
 }
 
 }

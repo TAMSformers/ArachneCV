@@ -17,7 +17,7 @@
 
 #include <opencv2/opencv.hpp>
 
-//#include "ArachneCVConfig.h"
+#include "ArachneCVConfig.h"
 
 namespace acv{
 
@@ -27,6 +27,7 @@ namespace acv{
 class acvCamera
 {
   private:
+    int cam_num; /*< camera number */
     cv::Size cam_size; /*< camera resolution */
     int cam_coords[ 2 ]; /*< physical location */
     int cam_angle; /*< angle of declination, needed for warping */
@@ -38,6 +39,7 @@ class acvCamera
     acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
     void acvGetFrame( ); /**< retrieve next frame, should be run in a loop */
     void acvWarpPerspective( ); /**< warp image to generate overhead view from angled camera */
+    void acvShowFrame( ); /**< create a window if not opened and show the current frame */
 };
 
 }

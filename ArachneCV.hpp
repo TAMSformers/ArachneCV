@@ -12,9 +12,9 @@
 #ifndef __ARACHNECV_CAMERA_PROXY__
 #define __ARACHNECV_CAMERA_PROXY__
 
-#include "camera_acv.hpp"
+#include "camera.hpp"
 
-//#include "ArachneCVConfig.h"
+#include "ArachneCVConfig.h"
 
 namespace acv{
 
@@ -35,6 +35,7 @@ class Camera
     Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< constructor */
     void GetFrame( ); /**< retrieve next frame, should be run in a loop */
     void WarpPerspective( ); /**< warp image to generate overhead view from angled camera */
+    void ShowFrame( ); /**< create a window if not opened and show the current frame */
    ~Camera( ); /**< destructor */
 };
 
