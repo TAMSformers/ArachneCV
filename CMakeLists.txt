@@ -40,7 +40,7 @@ find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
 
 install( TARGETS ArachneCV DESTINATION lib )
-install( FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" ArachneCV.hpp DESTINATION include )
+install( FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" ArachneCV.hpp camera.hpp DESTINATION "include/ArachneCV" )
 
 ENDIF( OUTPUT_NATIVE )
 

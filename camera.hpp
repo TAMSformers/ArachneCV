@@ -34,6 +34,7 @@ class acvCamera
 
     cv::VideoCapture capture; /*< video stream from camera */
     cv::Mat frame; /*< current frame from video stream */
+    cv::Mat warped;
 
   public:
     acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
