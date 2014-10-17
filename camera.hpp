@@ -40,6 +40,8 @@ class acvCamera
     acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
     void acvGetFrame( ); /**< retrieve next frame, should be run in a loop */
     void acvWarpPerspective( ); /**< warp image to generate overhead view from angled camera */
+    void acvFindBalls( );
+    void acvFindRobots( );
     void acvShowFrame( ); /**< create a window if not opened and show the current frame */
 };
 

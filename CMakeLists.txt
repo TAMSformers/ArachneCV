@@ -34,6 +34,7 @@ IF( OUTPUT_NATIVE )
 add_library( ArachneCV
   ArachneCV.hpp ArachneCV.cpp
   camera.hpp camera.cpp
+  targets.cpp
 )
 
 find_package(OpenCV REQUIRED)
@@ -63,6 +64,7 @@ set_source_files_properties( ArachneCV.i PROPERTIES CPLUSPLUS ON )
 swig_add_module( ArachneCV python ArachneCV.i
   ArachneCV.cpp
   camera.cpp
+  targets.cpp
 )
 swig_link_libraries( ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES} )
 

@@ -88,4 +88,14 @@ void acvCamera::acvShowFrame( )
   cv::waitKey(30);
 }
 
+void acvCamera::acvFindBalls( )
+{
+
+}
+
+void acvCamera::acvFindRobots( )
+{
+
+}
+
 }

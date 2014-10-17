@@ -43,6 +43,16 @@ void Camera::ShowFrame( )
   acv_camera->acvShowFrame( );
 }
 
+void Camera::FindBalls( )
+{
+  /*TODO process image and extract targets */
+}
+
+void Camera::FindRobots( )
+{
+  /*TODO process image and extract targets */
+}
+
 Camera::~Camera( )
 {
   delete acv_camera;

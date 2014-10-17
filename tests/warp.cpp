@@ -15,7 +15,7 @@ int main( )
 {
   int cam_size[2] = {638,479};
   int cam_coords[2] = {400,400};
-  acv::Camera camera1( 1, cam_size, cam_coords, 45);
+  acv::Camera camera1( 0, cam_size, cam_coords, 45);
   while( true )
   {
     camera1.GetFrame( );
