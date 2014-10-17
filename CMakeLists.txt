@@ -11,7 +11,7 @@ cmake_minimum_required( VERSION 2.6 )
 project( ArachneCV )
 
 set( ArachneCV_VERSION_MAJOR 0 )
-set( ArachneCV_VERSION_MINOR 2 )
+set( ArachneCV_VERSION_MINOR 3 )
 
 set( BUILD_SHARED_LIBS ON )
 
