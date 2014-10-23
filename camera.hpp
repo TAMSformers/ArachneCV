@@ -18,6 +18,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "ArachneCVConfig.h"
+#include "image_analysis.hpp"
 #include "targets.hpp"
 
 namespace acv{
@@ -37,12 +38,15 @@ class Camera
     cv::Mat frame; /*< current frame from video stream */
     cv::Mat warped;
 
+    Target targets[ 16 ];
+
   public:
     Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
     void GetFrame( ); /**< retrieve next frame, should be run in a loop */
     void WarpPerspective( ); /**< warp image to generate overhead view from angled camera */
-    void FindBalls( /*Target target*/ );
-    void FindRobots( /*Target target*/ );
+    void FindBalls( );
+    void FindRobots( );
+    void ClearTargets( );
     void ShowFrame( ); /**< create a window if not opened and show the current frame */
 };
 

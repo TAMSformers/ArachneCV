@@ -8,3 +8,7 @@
  * Object-finding algorithms
  *
  */
+
+#include <opencv2/opencv.hpp>
+
+#include "targets.hpp"

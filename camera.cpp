@@ -90,15 +90,22 @@ void Camera::ShowFrame( )
   cv::waitKey(30);
 }
 
-void Camera::FindBalls( /*Target target[ 16 ]*/ )
+void Camera::FindBalls( )
 {
-  Target merge_targets[ 16 ];
-
   /*TODO link to algorithms, probably implemented in their own class */
   /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
 
-void Camera::FindRobots( /*Target target[ 16 ]*/ )
+void Camera::ClearTargets( )
+{
+  /* don't bother setting all parameters to NULL; this is enough to identify */
+  for( int i = 0; i < 16; i++ ) {
+    targets[ i ].type = "";
+    targets[ i ].color = "";
+  }
+}
+
+void Camera::FindRobots( )
 {
   Target merge_targets[ 16 ];
 

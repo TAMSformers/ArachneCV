@@ -14,14 +14,14 @@
 
 #include <string>
 
-#include "camera.hpp"
+#include <opencv2/opencv.hpp>
 
 namespace acv {
 
 typedef struct Target
 {
-  std::string type; /**< either robot, ball, or some other target */
-  std::string color; /**< either red or blue */
+  std::string type = ""; /**< either robot, ball, or some other target */
+  std::string color = ""; /**< either red or blue */
   int coords[ 3 ]; /**< coordinates in 3-space */
   int velocity[ 3 ]; /**< velocity in 3-space */
 } Target;
@@ -29,10 +29,10 @@ typedef struct Target
 class Targets
 {
   private:
-    Target target[ 16 ];
+    Target targets[ 16 ];
   public:
     Targets( );
-    void Merge( /*Camera camera*/ );
+    void Merge( Target input_targets[ 16 ] );
    ~Targets( );
 };
 

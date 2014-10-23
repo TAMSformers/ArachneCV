@@ -12,14 +12,13 @@
 #include <opencv2/opencv.hpp>
 
 #include "ArachneCVConfig.h"
-#include "camera.hpp"
+#include "targets.hpp"
 
 namespace acv{
 
-void Targets::Merge( /*Camera camera*/ )
+void Targets::Merge( Target input_targets[ 16 ] )
 {
-//  camera.acv_camera->acvFindBalls( target );
-//  camera.acv_camera->acvFindRobots( target );
+  /*TODO determine which objects in input_targets are already in targets, average the positions and velocities of the two, and add any that are absent */
 }
 
 }
