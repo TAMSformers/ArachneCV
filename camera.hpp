@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __ARACHNECV_CAMERA_ACV__
-#define __ARACHNECV_CAMERA_ACV__
+#ifndef __ARACHNECV_CAMERA__
+#define __ARACHNECV_CAMERA__
 
 #include <vector>
 #include <cmath>
@@ -18,13 +18,14 @@
 #include <opencv2/opencv.hpp>
 
 #include "ArachneCVConfig.h"
+#include "targets.hpp"
 
 namespace acv{
 
 /** \brief internal representation of a camera
  *
  */
-class acvCamera
+class Camera
 {
   private:
     int cam_num; /*< camera number */
@@ -37,12 +38,12 @@ class acvCamera
     cv::Mat warped;
 
   public:
-    acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
-    void acvGetFrame( ); /**< retrieve next frame, should be run in a loop */
-    void acvWarpPerspective( ); /**< warp image to generate overhead view from angled camera */
-    void acvFindBalls( );
-    void acvFindRobots( );
-    void acvShowFrame( ); /**< create a window if not opened and show the current frame */
+    Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
+    void GetFrame( ); /**< retrieve next frame, should be run in a loop */
+    void WarpPerspective( ); /**< warp image to generate overhead view from angled camera */
+    void FindBalls( /*Target target*/ );
+    void FindRobots( /*Target target*/ );
+    void ShowFrame( ); /**< create a window if not opened and show the current frame */
 };
 
 }

@@ -11,26 +11,15 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "ArachneCV.hpp"
-
 #include "ArachneCVConfig.h"
+#include "camera.hpp"
 
 namespace acv{
 
-Targets::Targets( )
+void Targets::Merge( /*Camera camera*/ )
 {
-  /*TODO maybe add dynamically allocated memory */
-}
-
-void Targets::Merge( Camera camera )
-{
-  camera.acv_camera->acvFindBalls( );
-  camera.acv_camera->acvFindRobots( );
-}
-
-Targets::~Targets( )
-{
-  /*TODO free any memory we need to */
+//  camera.acv_camera->acvFindBalls( target );
+//  camera.acv_camera->acvFindRobots( target );
 }
 
 }

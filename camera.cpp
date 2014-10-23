@@ -15,12 +15,13 @@
 #include <opencv2/opencv.hpp>
 
 #include "camera.hpp"
+#include "targets.hpp"
 
 #include "ArachneCVConfig.h"
 
 namespace acv{
 
-acvCamera::acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in )
+Camera::Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in )
 {
   cam_num = cam_num_in;
   cam_size.width = cam_size_in[ 0 ];
@@ -34,14 +35,14 @@ acvCamera::acvCamera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2
     exit( 1 );
 }
 
-void acvCamera::acvGetFrame( )
+void Camera::GetFrame( )
 {
   capture >> frame;
   cv::imshow("frame", frame);
   cv::waitKey( 30 );
 }
 
-void acvCamera::acvWarpPerspective( )
+void Camera::WarpPerspective( )
 {
   /* point arrays to generate transform matrix */
   std::vector<cv::Point2f> src_pts( 4 );
@@ -69,6 +70,7 @@ void acvCamera::acvWarpPerspective( )
     src_pts[ 2 ] = S2;
     src_pts[ 3 ] = S3;
   } else {
+    /* hard-coded to 45 for now, exit if different */
     exit(1);
   }
 
@@ -81,21 +83,27 @@ void acvCamera::acvWarpPerspective( )
   cv::warpPerspective( frame, warped, M, dsize );
 }
 
-void acvCamera::acvShowFrame( )
+void Camera::ShowFrame( )
 {
   /* TODO add camera name to window name */
   cv::imshow( "warped", warped );
   cv::waitKey(30);
 }
 
-void acvCamera::acvFindBalls( )
+void Camera::FindBalls( /*Target target[ 16 ]*/ )
 {
+  Target merge_targets[ 16 ];
 
+  /*TODO link to algorithms, probably implemented in their own class */
+  /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
 
-void acvCamera::acvFindRobots( )
+void Camera::FindRobots( /*Target target[ 16 ]*/ )
 {
+  Target merge_targets[ 16 ];
 
+  /*TODO link to algorithms, probably implemented in their own class */
+  /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
 
 }
