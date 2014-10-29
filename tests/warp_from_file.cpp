@@ -19,6 +19,7 @@ int main( )
   {
     camera1.GetFrameFromImage( "image.jpg" );
     camera1.WarpPerspective( );
+    camera1.FindBalls( );
     camera1.ShowFrame( );
   }
   return 0;

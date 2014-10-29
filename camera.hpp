@@ -38,8 +38,6 @@ class Camera
     cv::Mat frame; /*< current frame from video stream */
     cv::Mat warped;
 
-    Target targets[ 16 ];
-
   public:
     Camera( int cam_num_in, int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
     void GetFrame( ); /**< retrieve next frame, should be run in a loop */
@@ -49,6 +47,7 @@ class Camera
     void FindRobots( );
     void ClearTargets( );
     void ShowFrame( ); /**< create a window if not opened and show the current frame */
+    Target targets[ 16 ];
 };
 
 }

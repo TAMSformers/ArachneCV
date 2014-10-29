@@ -15,6 +15,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "camera.hpp"
+#include "image_analysis.hpp"
 #include "targets.hpp"
 
 #include "ArachneCVConfig.h"
@@ -109,6 +110,18 @@ void Camera::ShowFrame( )
 
 void Camera::FindBalls( )
 {
+  Target merge_targets[ 16 ];
+
+  findBallsInFrame( warped, merge_targets );
+
+  /*TODO convert merge_targets coords (which are with respect to the camera) to be with respect to the robot using Camera.coords */
+  /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
+}
+
+void Camera::FindRobots( )
+{
+  Target merge_targets[ 16 ];
+
   /*TODO link to algorithms, probably implemented in their own class */
   /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
@@ -120,14 +133,6 @@ void Camera::ClearTargets( )
     targets[ i ].type = "";
     targets[ i ].color = "";
   }
-}
-
-void Camera::FindRobots( )
-{
-  Target merge_targets[ 16 ];
-
-  /*TODO link to algorithms, probably implemented in their own class */
-  /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
 
 }

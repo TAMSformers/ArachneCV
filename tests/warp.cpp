@@ -5,7 +5,7 @@
  *
  *
  *
- * Main test. Temporary; we need a testing suite.
+ * Find balls and display.
  *
  */
 
@@ -19,6 +19,7 @@ int main( )
   {
     camera1.GetFrame( );
     camera1.WarpPerspective( );
+    camera1.FindBalls( );
     camera1.ShowFrame( );
   }
   return 0;
