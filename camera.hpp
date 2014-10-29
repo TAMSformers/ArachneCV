@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
 
 #include <opencv2/opencv.hpp>
 
@@ -30,7 +31,6 @@ class Camera
 {
   private:
     int cam_num; /*< camera number */
-    cv::Size cam_size; /*< camera resolution */
     int cam_coords[ 2 ]; /*< physical location */
     int cam_angle; /*< angle of declination, needed for warping */
 
@@ -41,8 +41,9 @@ class Camera
     Target targets[ 16 ];
 
   public:
-    Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
+    Camera( int cam_num_in, int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
     void GetFrame( ); /**< retrieve next frame, should be run in a loop */
+    void GetFrameFromImage( std::string image ); /**< load next frame from specified image instead of camera. useful for testing */
     void WarpPerspective( ); /**< warp image to generate overhead view from angled camera */
     void FindBalls( );
     void FindRobots( );

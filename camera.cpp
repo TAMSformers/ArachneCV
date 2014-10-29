@@ -21,11 +21,9 @@
 
 namespace acv{
 
-Camera::Camera( int cam_num_in, int cam_size_in[ 2 ], int cam_coords_in[ 2 ], int cam_angle_in )
+Camera::Camera( int cam_num_in, int cam_coords_in[ 2 ], int cam_angle_in )
 {
   cam_num = cam_num_in;
-  cam_size.width = cam_size_in[ 0 ];
-  cam_size.height = cam_size_in[ 1 ];
   cam_coords[ 0 ] = cam_coords_in[ 0 ];
   cam_coords[ 1 ] = cam_coords_in[ 1 ];
   cam_angle = cam_angle_in;
@@ -42,43 +40,62 @@ void Camera::GetFrame( )
   cv::waitKey( 30 );
 }
 
+void Camera::GetFrameFromImage( std::string image )
+{
+  frame = cv::imread( image, CV_LOAD_IMAGE_UNCHANGED );
+  cv::imshow( "frame from image", frame );
+  cv::waitKey( 30 );
+}
+
 void Camera::WarpPerspective( )
 {
+  /* get camera size */
+  cv::Size cam_size = frame.size();
+
   /* point arrays to generate transform matrix */
   std::vector<cv::Point2f> src_pts( 4 );
   std::vector<cv::Point2f> dst_pts( 4 );
 
-  /* initialize destination array */
+  /* initialize source array */
+  cv::Point2f S0( 0.0, 0.0 );
+  cv::Point2f S1( (float)cam_size.width, 0.0 );
+  cv::Point2f S2( (float)cam_size.width, (float)cam_size.height );
+  cv::Point2f S3( 0.0, (float)cam_size.height );
+  src_pts[ 0 ] = S0;
+  src_pts[ 1 ] = S1;
+  src_pts[ 2 ] = S2;
+  src_pts[ 3 ] = S3;
+
+  /* find transform from reference angle */
+//  if( cam_angle = 45 )
+//  {
+//    cv::Point2f S0( 75.0, 200 );
+//    cv::Point2f S1( cam_size.width - 75.0, 200 );
+//    cv::Point2f S2((float)cam_size.width, (float)cam_size.height );
+//    cv::Point2f S3( 0.0 , (float)cam_size.height );
+//    src_pts[ 0 ] = S0;
+//    src_pts[ 1 ] = S1;
+//    src_pts[ 2 ] = S2;
+//    src_pts[ 3 ] = S3;
+//  } else {
+    /* hard-coded to 45 for now, exit if different */
+//    exit(1);
+//  }
+  float warp_factor = 90.0 / cam_angle;
+  cv::Size dsize( cam_size.width * warp_factor, cam_size.height );
   cv::Point2f D0( 0.0, 0.0 );
-  cv::Point2f D1( (float)cam_size.width, 0.0 );
-  cv::Point2f D2( (float)cam_size.width, (float)cam_size.height );
-  cv::Point2f D3( 0.0, (float)cam_size.height );
+  cv::Point2f D1( (float)dsize.width, 0.0 );
+  cv::Point2f D2( ((float)dsize.width / 2) + ((float)cam_size.width / 2), (float)dsize.height );
+  cv::Point2f D3( ((float)dsize.width / 2) - ((float)cam_size.width / 2), (float)dsize.height );
   dst_pts[ 0 ] = D0;
   dst_pts[ 1 ] = D1;
   dst_pts[ 2 ] = D2;
   dst_pts[ 3 ] = D3;
 
-  /* find transform from reference angle */
-  if( cam_angle = 45 )
-  {
-    cv::Point2f S0( 75.0, 200 );
-    cv::Point2f S1( cam_size.width - 75.0, 200 );
-    cv::Point2f S2((float)cam_size.width, (float)cam_size.height );
-    cv::Point2f S3( 0.0 , (float)cam_size.height );
-    src_pts[ 0 ] = S0;
-    src_pts[ 1 ] = S1;
-    src_pts[ 2 ] = S2;
-    src_pts[ 3 ] = S3;
-  } else {
-    /* hard-coded to 45 for now, exit if different */
-    exit(1);
-  }
-
   /* generate transform matrix */
   cv::Mat M = cv::getPerspectiveTransform( src_pts, dst_pts );
   M.convertTo( M, CV_32F );
 
-  cv::Size dsize = frame.size();
   /* apply transform matrix */
   cv::warpPerspective( frame, warped, M, dsize );
 }
