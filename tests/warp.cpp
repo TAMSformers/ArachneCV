@@ -13,8 +13,8 @@
 
 int main()
 {
-  int cam_coords[3];
-  acv::Camera camera1(1, cam_coords, 45);
+  double cam_coords[3] = {1, 1, 1};
+  acv::Camera camera1(1, cam_coords, 45, "left");
   while (true)
   {
     camera1.getFrame();

@@ -15,7 +15,7 @@
 
 namespace acv {
 
-void findBallsInFrame(cv::Mat frame_in, Target targets[16])
+void findBallsInFrame(cv::Mat frame_in, Target targets[16], double cam_distance)
 {
   /* modified frame for mask */
   cv::Mat frame_mask;
@@ -55,14 +55,16 @@ void findBallsInFrame(cv::Mat frame_in, Target targets[16])
   for (int i = 0; i < circles.size(); i++) {
     targets[i].type =  "ball";
     targets[i].color = "red";
-    targets[i].coords[0] = circles[i][0];
-    targets[i].coords[1] = circles[i][1];
+//    printf("%f %f\n", circles[i][0], circles[i][1]);
+    targets[i].coords[0] = (circles[i][0] - (frame_in.size().width / 2)) / (cam_distance * (frame_in.size().width / frame_in.size().height));
+    targets[i].coords[1] = (frame_in.size().height - circles[i][1]) / cam_distance;
     /* can't determine z coordinate from above, so set to zero */
     targets[i].coords[2] = 0;
+//    printf("%f %f\n", targets[i].coords[0], targets[i].coords[1]);
   }
 }
 
-void findRobotsInFrame(cv::Mat frame, Target targets[16])
+void findRobotsInFrame(cv::Mat frame, Target targets[16], double cam_distance)
 {
 
 }

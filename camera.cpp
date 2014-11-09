@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include <opencv2/opencv.hpp>
 
@@ -22,12 +23,15 @@
 
 namespace acv {
 
-Camera::Camera(int cam_num_in, int cam_coords_in[2], int cam_angle_in)
+Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, std::string orientation)
 {
   cam_num = cam_num_in;
   cam_coords[0] = cam_coords_in[0];
   cam_coords[1] = cam_coords_in[1];
+  cam_coords[2] = cam_coords_in[2];
   cam_angle = cam_angle_in;
+  cam_distance = cam_coords[2] * tan(cam_angle * 3.1415 / 180);
+  cam_orientation = orientation;
 
   capture = cam_num_in;
   if (!capture.isOpened())
@@ -112,9 +116,30 @@ void Camera::findBalls()
 {
   Target merge_targets[16];
 
-  findBallsInFrame(warped, merge_targets);
+  findBallsInFrame(warped, merge_targets, cam_distance);
+
 
   /*TODO convert merge_targets coords (which are with respect to the camera) to be with respect to the robot using Camera.coords */
+/*  for (int i = 0; i < 16; i++) {
+    if (merge_targets[i].type != "") {
+      printf("%f %f %f\n", merge_targets[i].coords[0], merge_targets[i].coords[1], merge_targets[i].coords[2]);
+      if (cam_orientation == "left") {
+       ;
+      }
+    }
+  }
+
+  for (int i = 0; i < 16; i++) {
+    if (merge_targets[i].type != "") {
+      for (int j = 0; j < 16; j++) {
+        if (targets[j].type == "") {
+          targets[j] = merge_targets[i];
+          break;
+        }
+      }
+    }
+  }*/
+
   /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
 
@@ -136,3 +161,4 @@ void Camera::clearTargets()
 }
 
 }
+

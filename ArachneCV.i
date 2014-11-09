@@ -14,7 +14,7 @@
 
 %include "camera.hpp"
 
-%Camera::Camera(int cam_num_in,int cam_coords_in[3], int cam_angle_in);
+%Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, string orientation);
 %Camera::GetFrame();
 %Camera::GetFrameFromImage();
 %Camera::WarpPerspective();
