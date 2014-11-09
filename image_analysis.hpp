@@ -18,8 +18,8 @@
 
 namespace acv {
 
-void findBallsInFrame( cv::Mat frame_in, Target targets[ 16 ] );
-void findRobotsInFrame( cv::Mat frame, Target targets[ 16 ] );
+void findBallsInFrame(cv::Mat frame_in, Target targets[16]);
+void findRobotsInFrame(cv::Mat frame, Target targets[16]);
 
 }
 

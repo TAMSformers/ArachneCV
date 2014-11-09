@@ -11,16 +11,16 @@
 
 #include <ArachneCV/ArachneCV.hpp>
 
-int main( )
+int main()
 {
-  int cam_coords[ 2 ];
-  acv::Camera camera1( 1, cam_coords, 45);
-  while( true )
+  int cam_coords[3];
+  acv::Camera camera1(1, cam_coords, 45);
+  while (true)
   {
-    camera1.GetFrame( );
-    camera1.WarpPerspective( );
-    camera1.FindBalls( );
-    camera1.ShowFrame( );
+    camera1.getFrame();
+    camera1.warpPerspective();
+    camera1.findBalls();
+    camera1.showFrame();
   }
   return 0;
 }

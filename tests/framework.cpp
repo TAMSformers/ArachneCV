@@ -11,28 +11,28 @@
 
 #include <ArachneCV.hpp>
 
-int main( )
+int main()
 {
-  acv::Camera *camera0 = new acv::Camera( $params );
-  acv::Camera *camera1 = new acv::Camera( $params );
+  acv::Camera *camera0 = new acv::Camera($params);
+  acv::Camera *camera1 = new acv::Camera($params);
 
-  acv::Targets *targets = new acv::Targets( );
+  acv::Targets *targets = new acv::Targets();
 
-  while( true ) {
-    camera0.GetFrame( );
-    camera1.GetFrame( );
+  while (true) {
+    camera0.getFrame();
+    camera1.getFrame();
 
-    camera0.WarpPerspective( );
-    camera1.WarpPerspective( );
+    camera0.warpPerspective();
+    camera1.warpPerspective();
 
-    camera0.FindBalls( );
-    camera0.FindRobots( );
+    camera0.findBalls();
+    camera0.findRobots();
 
-    camera1.FindBalls( );
-    camera1.FindRobots( );
+    camera1.findBalls();
+    camera1.findRobots();
 
-    targets.Merge( camera0.targets );
-    targets.Merge( camera1.targets );
+    targets.merge( camera0.targets );
+    targets.merge( camera1.targets );
 
     camera0.ClearTargets( );
     camera1.ClearTargets( );

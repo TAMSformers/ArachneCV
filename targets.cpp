@@ -16,7 +16,7 @@
 
 namespace acv{
 
-void Targets::Merge( Target input_targets[ 16 ] )
+void Targets::merge(Target input_targets[16])
 {
   /*TODO determine which objects in input_targets are already in targets, average the positions and velocities of the two, and add any that are absent */
 }

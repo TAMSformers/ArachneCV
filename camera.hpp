@@ -22,7 +22,7 @@
 #include "image_analysis.hpp"
 #include "targets.hpp"
 
-namespace acv{
+namespace acv {
 
 /** \brief internal representation of a camera
  *
@@ -31,7 +31,7 @@ class Camera
 {
   private:
     int cam_num; /*< camera number */
-    int cam_coords[ 2 ]; /*< physical location */
+    int cam_coords[3]; /*< physical location */
     int cam_angle; /*< angle of declination, needed for warping */
 
     cv::VideoCapture capture; /*< video stream from camera */
@@ -39,15 +39,15 @@ class Camera
     cv::Mat warped;
 
   public:
-    Camera( int cam_num_in, int cam_coords_in[ 2 ], int cam_angle_in ); /**< contructor */
-    void GetFrame( ); /**< retrieve next frame, should be run in a loop */
-    void GetFrameFromImage( std::string image ); /**< load next frame from specified image instead of camera. useful for testing */
-    void WarpPerspective( ); /**< warp image to generate overhead view from angled camera */
-    void FindBalls( );
-    void FindRobots( );
-    void ClearTargets( );
-    void ShowFrame( ); /**< create a window if not opened and show the current frame */
-    Target targets[ 16 ];
+    Camera(int cam_num_in, int cam_coords_in[2], int cam_angle_in); /**< contructor */
+    void getFrame(); /**< retrieve next frame, should be run in a loop */
+    void getFrameFromImage(std::string image); /**< load next frame from specified image instead of camera. useful for testing */
+    void warpPerspective(); /**< warp image to generate overhead view from angled camera */
+    void findBalls();
+    void findRobots();
+    void clearTargets();
+    void showFrame(); /**< create a window if not opened and show the current frame */
+    Target targets[16];
 };
 
 }
