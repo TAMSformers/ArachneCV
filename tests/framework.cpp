@@ -22,6 +22,7 @@ int main()
     camera0.getFrame();
     camera1.getFrame();
 
+    // Required for findBalls and findRobots to return correct value, so merge into getFrame?
     camera0.warpPerspective();
     camera1.warpPerspective();
 
@@ -31,11 +32,10 @@ int main()
     camera1.findBalls();
     camera1.findRobots();
 
-    targets.merge( camera0.targets );
-    targets.merge( camera1.targets );
-
-    camera0.ClearTargets( );
-    camera1.ClearTargets( );
+    targets.merge(camera0.targets);
+    targets.merge(camera1.targets);
+    
+    // Removed clearTargets. Call private method clearTargets before getFrame.
   }
 
   delete camera0;
