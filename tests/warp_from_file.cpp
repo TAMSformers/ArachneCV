@@ -21,7 +21,6 @@ int main()
     camera1.warpPerspective();
     camera1.findBalls();
     camera1.showFrame();
-    camera1.clearTargets();
   }
   return 0;
 }

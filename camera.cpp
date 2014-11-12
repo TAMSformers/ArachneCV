@@ -40,6 +40,13 @@ Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, std::s
 
 void Camera::getFrame()
 {
+  /* Clear targets from last frame */
+  /* Don't bother setting all parameters to NULL; this is enough to identify */
+  for (int i = 0; i < 16; i++) {
+    targets[i].type = "";
+    targets[i].color = "";
+  }
+
   capture >> frame;
   cv::imshow("frame", frame);
   cv::waitKey(30);
@@ -151,14 +158,14 @@ void Camera::findRobots()
   /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
 
-void Camera::clearTargets()
-{
-  /* don't bother setting all parameters to NULL; this is enough to identify */
-  for (int i = 0; i < 16; i++) {
-    targets[i].type = "";
-    targets[i].color = "";
-  }
-}
+//void Camera::clearTargets()
+//{
+//  /* don't bother setting all parameters to NULL; this is enough to identify */
+//  for (int i = 0; i < 16; i++) {
+//    targets[i].type = "";
+//    targets[i].color = "";
+//  }
+//}
 
 }
 

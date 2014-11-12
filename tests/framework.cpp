@@ -34,8 +34,6 @@ int main()
 
     targets.merge(camera0.targets);
     targets.merge(camera1.targets);
-    
-    // Removed clearTargets. Call private method clearTargets before getFrame.
   }
 
   delete camera0;

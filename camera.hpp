@@ -47,7 +47,6 @@ class Camera
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
     void findBalls();
     void findRobots();
-    void clearTargets();
     void showFrame(); /**< create a window if not opened and show the current frame */
     Target targets[16];
 };

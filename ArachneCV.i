@@ -20,7 +20,6 @@
 %Camera::WarpPerspective();
 %Camera::FindBalls();
 %Camera::FindRobots();
-%Camera::ClearTargets();
 %Camera::ShowFrame();
 %Camera::~Camera();
 
