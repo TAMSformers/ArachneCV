@@ -23,14 +23,15 @@
 
 namespace acv {
 
-Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, std::string orientation)
+Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft)
 {
+  assert(0 < cam_angle < 90);
   cam_num = cam_num_in;
   cam_coords[0] = cam_coords_in[0];
   cam_coords[1] = cam_coords_in[1];
   cam_coords[2] = cam_coords_in[2];
   cam_angle = cam_angle_in;
-  cam_distance = cam_coords[2] * tan(cam_angle * 3.1415 / 180);
+  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft;
   cam_orientation = orientation;
 
   capture = cam_num_in;
@@ -127,15 +128,19 @@ void Camera::findBalls()
 
 
   /*TODO convert merge_targets coords (which are with respect to the camera) to be with respect to the robot using Camera.coords */
-/*  for (int i = 0; i < 16; i++) {
+  Target tmp_target;
+  for (int i = 0; i < 16; i++) {
     if (merge_targets[i].type != "") {
-      printf("%f %f %f\n", merge_targets[i].coords[0], merge_targets[i].coords[1], merge_targets[i].coords[2]);
-      if (cam_orientation == "left") {
-       ;
+//      printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
+      tmp_target.coords[0] = cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+      tmp_target.coords[1] = sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+      merge_targets[i].coords[0] = tmp_target.coords[0];
+      merge_targets[i].coords[1] = tmp_target.coords[1];
+//      printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
       }
-    }
   }
 
+  /* Add converted targets to array */
   for (int i = 0; i < 16; i++) {
     if (merge_targets[i].type != "") {
       for (int j = 0; j < 16; j++) {
@@ -145,7 +150,7 @@ void Camera::findBalls()
         }
       }
     }
-  }*/
+  }
 
   /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }

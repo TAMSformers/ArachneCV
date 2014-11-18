@@ -34,14 +34,14 @@ class Camera
     double cam_coords[3]; /*< physical location */
     int cam_angle; /*< angle of declination, needed for warping */
     double cam_distance; /*< length of field of view captured by the camera from overhead */
-    std::string cam_orientation; /*< direction camera faces */
+    int cam_orientation; /*< direction camera faces, measured counter-clockwise from front */
 
     cv::VideoCapture capture; /*< video stream from camera */
     cv::Mat frame; /*< current frame from video stream */
     cv::Mat warped;
 
   public:
-    Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, std::string orientation); /**< contructor */
+    Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft); /**< contructor */
     void getFrame(); /**< retrieve next frame, should be run in a loop */
     void getFrameFromImage(std::string image); /**< load next frame from specified image instead of camera. useful for testing */
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
