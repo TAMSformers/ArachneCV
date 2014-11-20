@@ -29,9 +29,9 @@ class Targets
   private:
     Target targets[16];
   public:
-    Targets();
+//    Targets();
     void merge(Target input_targets[16]);
-   ~Targets();
+//   ~Targets();
 };
 
 }
