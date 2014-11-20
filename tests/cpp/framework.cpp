@@ -27,9 +27,9 @@ int main()
     camera1.warpPerspective();
 
     camera0.findBalls();
-    camera0.findRobots();
-
     camera1.findBalls();
+
+    camera0.findRobots();
     camera1.findRobots();
 
     targets.merge(camera0.targets);
