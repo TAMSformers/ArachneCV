@@ -48,13 +48,15 @@ using namespace acv;
 }
 */
 
+%include stl.i
+
 %include "camera.hpp"
 %include "targets.hpp"
 %include "image_analysis.hpp"
 
 %Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
 %Camera::GetFrame();
-%Camera::GetFrameFromImage();
+%Camera::GetFrameFromImage(std::string image);
 %Camera::WarpPerspective();
 %Camera::FindBalls();
 %Camera::FindRobots();

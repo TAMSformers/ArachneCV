@@ -31,7 +31,7 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-IF(OUTPUT_NATIVE)
+if(OUTPUT_NATIVE)
 
 add_library(ArachneCV
   ArachneCV.hpp
@@ -46,9 +46,9 @@ target_link_libraries(ArachneCV ${OpenCV_LIBS})
 install(TARGETS ArachneCV DESTINATION lib)
 install(FILES "${PROJECT_BINARY_DIR}/ArachneCVConfig.h" ArachneCV.hpp camera.hpp image_analysis.hpp targets.hpp DESTINATION "include/ArachneCV")
 
-ENDIF(OUTPUT_NATIVE)
+endif(OUTPUT_NATIVE)
 
-IF(OUTPUT_PYTHON)
+if(OUTPUT_PYTHON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -71,4 +71,11 @@ swig_add_module(ArachneCV python ArachneCV.i
 )
 swig_link_libraries(ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES})
 
-ENDIF(OUTPUT_PYTHON)
+if(${UNIX})
+execute_process(COMMAND python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
+                OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
+install(TARGETS _ArachneCV DESTINATION ${PYTHON_SITE_PACKAGES})
+install(FILES ${PROJECT_BINARY_DIR}/ArachneCV.py DESTINATION ${PYTHON_SITE_PACKAGES})
+endif(${UNIX})
+
+endif(OUTPUT_PYTHON)
