@@ -15,5 +15,5 @@ camera = acv.Camera(0, [1, 1, 1], 45, 90, 50);
 while (True):
     camera.getFrameFromImage("../image.jpg");
     camera.warpPerspective();
-    camera.findBalls();
+    camera.findTargets();
     camera.showFrame();

@@ -13,10 +13,13 @@
 
 int main()
 {
-  acv::Camera *camera0 = new acv::Camera($params);
-  acv::Camera *camera1 = new acv::Camera($params);
+  double cam_coords0[3] = {-1, 0, 2};
+  double cam_coords1[3] = {1, 0, 2};
 
-  acv::Targets *targets = new acv::Targets();
+  acv::Camera camera0(0, cam_coords0, 45, 90, 50);
+  acv::Camera camera1(0, cam_coords1, 45, 90, 50);
+
+  acv::Targets targets();
 
   while (true) {
     camera0.getFrame();
@@ -26,18 +29,12 @@ int main()
     camera0.warpPerspective();
     camera1.warpPerspective();
 
-    camera0.findBalls();
-    camera1.findBalls();
-
-    camera0.findRobots();
-    camera1.findRobots();
+    camera0.findTargets();
+    camera1.findTargets();
 
     targets.merge(camera0.targets);
     targets.merge(camera1.targets);
   }
-
-  delete camera0;
-  delete camera1;
 
   return 0;
 }

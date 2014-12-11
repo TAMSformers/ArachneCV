@@ -11,8 +11,8 @@
 
 import ArachneCV as acv
 
-camera0 = acv.Camera($params)
-camera1 = acv.Camera($params)
+camera0 = acv.Camera(0, [-1, 0, 2], 45, 90, 50);
+camera1 = acv.Camera(0, [1, 0, 2], 45, 90, 50);
 
 targets = acv.Targets()
 
@@ -23,11 +23,8 @@ while (True):
     camera0.warpPerspective()
     camera1.warpPerspective()
 
-    camera0.findBalls()
-    camera1.findBalls()
-
-    camera0.findRobots()
-    camera1.findRobots()
+    camera0.findTargets()
+    camera1.findTargets()
 
     targets.merge(camera0.targets)
     targets.merge(camera1.targets)

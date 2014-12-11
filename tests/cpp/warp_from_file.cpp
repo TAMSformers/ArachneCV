@@ -19,7 +19,7 @@ int main()
   {
     camera1.getFrameFromImage("../image.jpg");
     camera1.warpPerspective();
-    camera1.findBalls();
+    camera1.findTargets();
     camera1.showFrame();
   }
   return 0;

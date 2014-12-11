@@ -58,8 +58,7 @@ using namespace acv;
 %Camera::GetFrame();
 %Camera::GetFrameFromImage(std::string image);
 %Camera::WarpPerspective();
-%Camera::FindBalls();
-%Camera::FindRobots();
+%Camera::FindTargets();
 %Camera::ShowFrame();
 %Camera::~Camera();
 

@@ -120,57 +120,40 @@ void Camera::showFrame()
   cv::waitKey(30);
 }
 
-void Camera::findBalls()
+void Camera::findTargets()
 {
-  Target merge_targets[16];
+  std::string colors[2] = {"red", "blue"};
 
-  findBallsInFrame(warped, merge_targets, cam_distance);
+  for (int i = 0; i < 2; i++) {
+    Target merge_targets[16];
+    findTargetsInFrame(warped, merge_targets, colors[i], cam_distance);
 
+    /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
+    Target tmp_target;
+    for (int i = 0; i < 16; i++) {
+      if (merge_targets[i].type != "") {
+//        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
+        tmp_target.coords[0] = cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+        tmp_target.coords[1] = sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+        merge_targets[i].coords[0] = tmp_target.coords[0];
+        merge_targets[i].coords[1] = tmp_target.coords[1];
+//        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
+        }
+    }
 
-  /*TODO convert merge_targets coords (which are with respect to the camera) to be with respect to the robot using Camera.coords */
-  Target tmp_target;
-  for (int i = 0; i < 16; i++) {
-    if (merge_targets[i].type != "") {
-//      printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-      tmp_target.coords[0] = cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-      tmp_target.coords[1] = sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-      merge_targets[i].coords[0] = tmp_target.coords[0];
-      merge_targets[i].coords[1] = tmp_target.coords[1];
-//      printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-      }
-  }
-
-  /* Add converted targets to array */
-  for (int i = 0; i < 16; i++) {
-    if (merge_targets[i].type != "") {
-      for (int j = 0; j < 16; j++) {
-        if (targets[j].type == "") {
-          targets[j] = merge_targets[i];
-          break;
+    /* Add converted targets to array */
+    for (int i = 0; i < 16; i++) {
+      if (merge_targets[i].type != "") {
+        for (int j = 0; j < 16; j++) {
+          if (targets[j].type == "") {
+            targets[j] = merge_targets[i];
+            break;
+          }
         }
       }
     }
   }
-
-  /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
 }
-
-void Camera::findRobots()
-{
-  Target merge_targets[16];
-
-  /*TODO link to algorithms, probably implemented in their own class */
-  /*TODO determine which objects in merge_targets are already in target, average the positions and velocities of the two, and add any that are absent */
-}
-
-//void Camera::clearTargets()
-//{
-//  /* don't bother setting all parameters to NULL; this is enough to identify */
-//  for (int i = 0; i < 16; i++) {
-//    targets[i].type = "";
-//    targets[i].color = "";
-//  }
-//}
 
 }
 

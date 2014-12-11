@@ -45,8 +45,7 @@ class Camera
     void getFrame(); /**< retrieve next frame, should be run in a loop */
     void getFrameFromImage(std::string image); /**< load next frame from specified image instead of camera. useful for testing */
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
-    void findBalls();
-    void findRobots();
+    void findTargets();
     void showFrame(); /**< create a window if not opened and show the current frame */
     Target targets[16];
 };
