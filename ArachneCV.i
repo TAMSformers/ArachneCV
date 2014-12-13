@@ -56,7 +56,7 @@ using acv::Target;
 %include "image_analysis.hpp"
 
 
-%acv::Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
+%acv::Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in);
 %acv::Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
 %acv::Camera::GetFrame();
 %acv::Camera::GetFrameFromImage(std::string image);
@@ -65,4 +65,4 @@ using acv::Target;
 %acv::Camera::ShowFrame();
 %acv::Camera::~Camera();
 
-%Targets::merge(acv::Target input_targets[16]);
+%Targets::merge(std::vector<acv::Target> input_targets);

@@ -23,7 +23,7 @@
 
 namespace acv {
 
-Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft)
+Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in)
 {
   assert(0 < cam_angle < 90);
   cam_num = cam_num_in;
@@ -31,7 +31,8 @@ Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int or
   cam_coords[1] = cam_coords_in[1];
   cam_coords[2] = cam_coords_in[2];
   cam_angle = cam_angle_in;
-  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft;
+  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft_in;
+  pix_per_ft = pix_per_ft_in;
   cam_orientation = orientation;
 
   capture = cam_num_in;
@@ -58,15 +59,13 @@ Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_
 void Camera::getFrame()
 {
   /* Clear targets from last frame */
-  /* Don't bother setting all parameters to NULL; this is enough to identify */
-  for (int i = 0; i < 16; i++) {
-    targets[i].type = "";
-    targets[i].color = "";
+  while (targets.size()) {
+    targets.pop_back();
   }
 
   capture >> frame;
 //  cv::imshow("frame", frame);
-  cv::waitKey(30);
+//  cv::waitKey(30);
 }
 
 void Camera::getFrameFromImage(std::string image)
@@ -141,32 +140,23 @@ void Camera::findTargets()
   std::string colors[2] = {"red", "blue"};
 
   for (int i = 0; i < 2; i++) {
-    Target merge_targets[16];
-    findTargetsInFrame(frame, merge_targets, colors[i], cam_distance);
+    std::vector<acv::Target> merge_targets;
+    findTargetsInFrame(frame, merge_targets, colors[i], cam_distance, pix_per_ft);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
     Target tmp_target;
-    for (int i = 0; i < 16; i++) {
-      if (merge_targets[i].type != "") {
+    for (int i = 0; i < merge_targets.size(); i++) {
 //        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-        tmp_target.coords[0] = cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-        tmp_target.coords[1] = sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-        merge_targets[i].coords[0] = tmp_target.coords[0];
-        merge_targets[i].coords[1] = tmp_target.coords[1];
+      tmp_target.coords[0] = cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+      tmp_target.coords[1] = sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+      merge_targets[i].coords[0] = tmp_target.coords[0];
+      merge_targets[i].coords[1] = tmp_target.coords[1];
 //        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-        }
     }
 
     /* Add converted targets to array */
-    for (int i = 0; i < 16; i++) {
-      if (merge_targets[i].type != "") {
-        for (int j = 0; j < 16; j++) {
-          if (targets[j].type == "") {
-            targets[j] = merge_targets[i];
-            break;
-          }
-        }
-      }
+    for (int i = 0; i < merge_targets.size(); i++) {
+      targets.push_back(merge_targets[i]);
     }
   }
 }

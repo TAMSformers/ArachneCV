@@ -18,7 +18,7 @@
 
 namespace acv {
 
-void findTargetsInFrame(cv::Mat frame_in, Target targets[16], std::string color, double cam_distance);
+void findTargetsInFrame(cv::Mat frame_in, std::vector<acv::Target> targets, std::string color, double cam_distance, int pix_per_ft);
 
 }
 

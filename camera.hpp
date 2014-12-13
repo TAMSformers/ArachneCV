@@ -34,6 +34,7 @@ class Camera
     double cam_coords[3]; /*< physical location */
     int cam_angle; /*< angle of declination, needed for warping */
     double cam_distance; /*< length of field of view captured by the camera from overhead */
+    int pix_per_ft; /*< Number of pixels equaling a foot when warped. */
     int cam_orientation; /*< direction camera faces, measured counter-clockwise from front */
 
     cv::VideoCapture capture; /*< video stream from camera */
@@ -47,7 +48,7 @@ class Camera
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
     void findTargets();
     void showFrame(); /**< create a window if not opened and show the current frame */
-    Target targets[16];
+    std::vector<acv::Target> targets;
 };
 
 }

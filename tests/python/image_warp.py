@@ -10,7 +10,7 @@
 
 import ArachneCV as acv
 
-camera = acv.Camera(0, [1, 1, 1], 45, 90, 50);
+camera = acv.Camera(0, [0, 0, 4], 45, 90, 30);
 
 while (True):
     camera.getFrameFromImage("../media/image.jpg");

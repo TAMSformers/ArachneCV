@@ -19,18 +19,19 @@
 namespace acv {
 
 typedef struct {
-  std::string type = ""; /**< either robot, ball, or some other target */
-  std::string color = ""; /**< either red or blue */
+  std::string type; /**< either robot, ball, or some other target */
+  std::string color; /**< either red or blue */
   float coords[3]; /**< coordinates in 3-space */
+  bool is_real = true;
 } Target;
 
 class Targets
 {
   private:
-    Target targets[16];
+    std::vector<acv::Target> targets;
   public:
 //    Targets();
-    void merge(Target input_targets[16]);
+    void merge(std::vector<acv::Target> input_targets);
 //   ~Targets();
 };
 
