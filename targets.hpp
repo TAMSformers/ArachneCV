@@ -28,11 +28,10 @@ typedef struct {
 class Targets
 {
   private:
-    std::vector<acv::Target> targets;
+    std::vector<Target> targets;
   public:
-//    Targets();
-    void merge(std::vector<acv::Target> input_targets);
-//   ~Targets();
+    void merge(std::vector<Target> input_targets);
+    void clear();
 };
 
 }

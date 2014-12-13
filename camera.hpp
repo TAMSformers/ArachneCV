@@ -48,7 +48,7 @@ class Camera
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
     void findTargets();
     void showFrame(); /**< create a window if not opened and show the current frame */
-    std::vector<acv::Target> targets;
+    std::vector<Target> targets;
 };
 
 }

@@ -15,17 +15,17 @@
 
 namespace acv {
 
-void findPossibleBallsInFrame(cv::Mat frame_in, std::vector<acv::Target> *targets, std::string color, double cam_distance, int pix_per_ft);
-void findPossibleRobotsInFrame(cv::Mat frame_in, std::vector<acv::Target> *targets, std::string color, double cam_distance, int pix_per_ft);
+void findPossibleBallsInFrame(cv::Mat frame_in, std::vector<Target> &targets, std::string color, double cam_distance, int pix_per_ft);
+void findPossibleRobotsInFrame(cv::Mat frame_in, std::vector<Target> &targets, std::string color, double cam_distance, int pix_per_ft);
 
-void findTargetsInFrame(cv::Mat frame_in, std::vector<acv::Target> targets, std::string color, double cam_distance, int pix_per_ft)
+void findTargetsInFrame(cv::Mat frame_in, std::vector<Target> &targets, std::string color, double cam_distance, int pix_per_ft)
 {
-  std::vector<acv::Target> ball_targets;
-  std::vector<acv::Target> robot_targets;
+  std::vector<Target> ball_targets;
+  std::vector<Target> robot_targets;
 
   /* Find each category of targets. These functions are not exposed globablly and WILL give incorrect results without the below checks. */
-  findPossibleBallsInFrame(frame_in, &ball_targets, color, cam_distance, pix_per_ft);
-  findPossibleRobotsInFrame(frame_in, &robot_targets, color, cam_distance, pix_per_ft);
+  findPossibleBallsInFrame(frame_in, ball_targets, color, cam_distance, pix_per_ft);
+  findPossibleRobotsInFrame(frame_in, robot_targets, color, cam_distance, pix_per_ft);
 
   /* If a ball is not very close to any "robots", it is probably of the other color. */
   /* If a "robot" is very close to a ball, it probably is the ball and not a robot. */
@@ -44,7 +44,7 @@ void findTargetsInFrame(cv::Mat frame_in, std::vector<acv::Target> targets, std:
   /* Annotate frame with identified targets (debugging) */
   for (int i = 0; i < ball_targets.size(); i++) {
     if (ball_targets[i].is_real) {
-      std::cout << "Ball: " << color << " " << ball_targets[i].coords[0] << " " << ball_targets[i].coords[1] << std::endl;
+      //std::cout << "Ball: " << color << " " << ball_targets[i].coords[0] << " " << ball_targets[i].coords[1] << std::endl;
       float pixels_x = (cam_distance * (frame_in.size().width / frame_in.size().height)) * ball_targets[i].coords[0] + (frame_in.size().width / 2);
       float pixels_y = frame_in.size().height - cam_distance * ball_targets[i].coords[1];
       cv::Point center(cvRound(pixels_x), cvRound(pixels_y));
@@ -54,7 +54,7 @@ void findTargetsInFrame(cv::Mat frame_in, std::vector<acv::Target> targets, std:
   }
   for (int i = 0; i < robot_targets.size(); i++) {
     if (robot_targets[i].is_real) {
-      std::cout << "Robot: " << color << " " << robot_targets[i].coords[0] << " " << robot_targets[i].coords[1] << std::endl;
+      //std::cout << "Robot: " << color << " " << robot_targets[i].coords[0] << " " << robot_targets[i].coords[1] << std::endl;
       float pixels_x = (cam_distance * (frame_in.size().width / frame_in.size().height)) * robot_targets[i].coords[0] + (frame_in.size().width / 2);
       float pixels_y = frame_in.size().height - cam_distance * robot_targets[i].coords[1];
       cv::Point center(cvRound(pixels_x), cvRound(pixels_y));
@@ -63,7 +63,7 @@ void findTargetsInFrame(cv::Mat frame_in, std::vector<acv::Target> targets, std:
     }
   }
   if (color == "blue") {
-    std::cout << std::endl;
+    //std::cout << std::endl;
   }
 
   /* Add converted targets to array */
@@ -79,7 +79,7 @@ void findTargetsInFrame(cv::Mat frame_in, std::vector<acv::Target> targets, std:
   }
 }
 
-void findPossibleBallsInFrame(cv::Mat frame_in, std::vector<acv::Target> *targets, std::string color, double cam_distance, int pix_per_ft)
+void findPossibleBallsInFrame(cv::Mat frame_in, std::vector<Target> &targets, std::string color, double cam_distance, int pix_per_ft)
 {
   /* modified frame for mask */
   cv::Mat frame_mask;
@@ -119,18 +119,18 @@ void findPossibleBallsInFrame(cv::Mat frame_in, std::vector<acv::Target> *target
 
   /* add circles to targets as balls */
   for (int i = 0; i < circles.size(); i++) {
-    acv::Target tmp_target;
+    Target tmp_target;
     tmp_target.type =  "ball";
     tmp_target.color = color;
     tmp_target.coords[0] = (circles[i][0] - (frame_in.size().width / 2)) / (cam_distance * (frame_in.size().width / frame_in.size().height));
     tmp_target.coords[1] = (frame_in.size().height - circles[i][1]) / cam_distance;
     /* can't determine z coordinate from above, so set to zero */
     tmp_target.coords[2] = 0;
-    targets->push_back(tmp_target);
+    targets.push_back(tmp_target);
   }
 }
 
-void findPossibleRobotsInFrame(cv::Mat frame_in, std::vector<acv::Target> *targets, std::string color, double cam_distance, int pix_per_ft)
+void findPossibleRobotsInFrame(cv::Mat frame_in, std::vector<Target> &targets, std::string color, double cam_distance, int pix_per_ft)
 {
   /* modified frame for mask */
   cv::Mat frame_mask;
@@ -179,14 +179,14 @@ void findPossibleRobotsInFrame(cv::Mat frame_in, std::vector<acv::Target> *targe
 
   /* add robots to targets */
   for (int i = 0; i < robots.size(); i++) {
-    acv::Target tmp_target;
+    Target tmp_target;
     tmp_target.type =  "robot";
     tmp_target.color = color;
     tmp_target.coords[0] = (robots[i][0] - (frame_in.size().width / 2)) / (cam_distance * (frame_in.size().width / frame_in.size().height));
     tmp_target.coords[1] = (frame_in.size().height - robots[i][1]) / cam_distance;
     /* can't determine z coordinate from above, so set to zero */
     tmp_target.coords[2] = 0;
-    targets->push_back(tmp_target);
+    targets.push_back(tmp_target);
   }
 }
 

@@ -64,15 +64,16 @@ void Camera::getFrame()
   }
 
   capture >> frame;
-//  cv::imshow("frame", frame);
-//  cv::waitKey(30);
 }
 
 void Camera::getFrameFromImage(std::string image)
 {
+  /* Clear targets from last frame */
+  while (targets.size()) {
+    targets.pop_back();
+  }
+
   frame = cv::imread(image, CV_LOAD_IMAGE_UNCHANGED);
-  cv::imshow("frame from image", frame);
-  cv::waitKey(30);
 }
 
 void Camera::warpPerspective()
@@ -130,8 +131,9 @@ void Camera::warpPerspective()
 
 void Camera::showFrame()
 {
-  /* TODO add camera name to window name */
-  cv::imshow("frame", frame);
+  char frame_name[10];
+  sprintf(frame_name, "Camera %d", cam_num);
+  cv::imshow(frame_name, frame);
   cv::waitKey(30);
 }
 
@@ -140,7 +142,7 @@ void Camera::findTargets()
   std::string colors[2] = {"red", "blue"};
 
   for (int i = 0; i < 2; i++) {
-    std::vector<acv::Target> merge_targets;
+    std::vector<Target> merge_targets;
     findTargetsInFrame(frame, merge_targets, colors[i], cam_distance, pix_per_ft);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */

@@ -65,4 +65,5 @@ using acv::Target;
 %acv::Camera::ShowFrame();
 %acv::Camera::~Camera();
 
-%Targets::merge(std::vector<acv::Target> input_targets);
+%acv::Targets::merge(std::vector<acv::Target> input_targets);
+%acv::Targets::clear();

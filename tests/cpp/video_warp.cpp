@@ -14,13 +14,17 @@
 int main()
 {
   double cam_coords[3] = {1, 1, 1};
-  acv::Camera camera0("../media/video0.mp4", cam_coords, 45, 90, 50);
+  acv::Camera camera("../media/video0.mp4", cam_coords, 45, 90, 50);
+  acv::Targets targets();
   while (true)
   {
-    camera0.getFrame();
-    camera0.warpPerspective();
-    camera0.findTargets();
-    camera0.showFrame();
+    camera.getFrame();
+    camera.warpPerspective();
+    camera.findTargets();
+    camera.showFrame();
+
+    targets.merge(camera.targets);
+    targets.clear();
   }
   return 0;
 }
