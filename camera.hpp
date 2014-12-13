@@ -38,10 +38,10 @@ class Camera
 
     cv::VideoCapture capture; /*< video stream from camera */
     cv::Mat frame; /*< current frame from video stream */
-    cv::Mat warped;
 
   public:
-    Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft); /**< contructor */
+    Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft); /**< webcam constructor */
+    Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft); /**< video file constructor */
     void getFrame(); /**< retrieve next frame, should be run in a loop */
     void getFrameFromImage(std::string image); /**< load next frame from specified image instead of camera. useful for testing */
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */

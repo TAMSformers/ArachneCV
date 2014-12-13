@@ -39,6 +39,22 @@ Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int or
     exit(1);
 }
 
+Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft)
+{
+  assert(0 < cam_angle < 90);
+  cam_num = -1;
+  cam_coords[0] = cam_coords_in[0];
+  cam_coords[1] = cam_coords_in[1];
+  cam_coords[2] = cam_coords_in[2];
+  cam_angle = cam_angle_in;
+  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft;
+  cam_orientation = orientation;
+
+  capture = file_name_in;
+  if (!capture.isOpened())
+    exit(1);
+}
+
 void Camera::getFrame()
 {
   /* Clear targets from last frame */
@@ -49,7 +65,7 @@ void Camera::getFrame()
   }
 
   capture >> frame;
-  cv::imshow("frame", frame);
+//  cv::imshow("frame", frame);
   cv::waitKey(30);
 }
 
@@ -110,13 +126,13 @@ void Camera::warpPerspective()
   M.convertTo(M, CV_32F);
 
   /* apply transform matrix */
-  cv::warpPerspective(frame, warped, M, dsize);
+  cv::warpPerspective(frame, frame, M, dsize);
 }
 
 void Camera::showFrame()
 {
   /* TODO add camera name to window name */
-  cv::imshow("warped", warped);
+  cv::imshow("frame", frame);
   cv::waitKey(30);
 }
 
@@ -126,7 +142,7 @@ void Camera::findTargets()
 
   for (int i = 0; i < 2; i++) {
     Target merge_targets[16];
-    findTargetsInFrame(warped, merge_targets, colors[i], cam_distance);
+    findTargetsInFrame(frame, merge_targets, colors[i], cam_distance);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
     Target tmp_target;

@@ -13,7 +13,8 @@
 #include "targets.hpp"
 #include "image_analysis.hpp"
 
-using namespace acv;
+/* SWIG doesn't recognize Target as part of acv, for some reason. */
+using acv::Target;
 %}
 
 %typemap(in) double[3] (double temp[3]) {
@@ -54,12 +55,14 @@ using namespace acv;
 %include "targets.hpp"
 %include "image_analysis.hpp"
 
-%Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
-%Camera::GetFrame();
-%Camera::GetFrameFromImage(std::string image);
-%Camera::WarpPerspective();
-%Camera::FindTargets();
-%Camera::ShowFrame();
-%Camera::~Camera();
 
-%Targets::merge(Target input_targets[16]);
+%acv::Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
+%acv::Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
+%acv::Camera::GetFrame();
+%acv::Camera::GetFrameFromImage(std::string image);
+%acv::Camera::WarpPerspective();
+%acv::Camera::FindTargets();
+%acv::Camera::ShowFrame();
+%acv::Camera::~Camera();
+
+%Targets::merge(acv::Target input_targets[16]);

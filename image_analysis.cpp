@@ -175,7 +175,7 @@ void findPossibleRobotsInFrame(cv::Mat frame_in, Target targets[16], std::string
   /* detect robots*/
   cv::findContours(frame_mask, contours, cv::noArray(), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
   for (int i = 0; i < contours.size(); i++) {
-    if (cv::contourArea(contours[i]) > 15000) {
+    if (cv::contourArea(contours[i]) > 500) {
       cv::Rect br = cv::boundingRect(contours[i]);
       cv::Vec2f center = cv::Vec2f(br.x + br.width / 2, br.y + br.height / 2);
       robots.push_back(center);

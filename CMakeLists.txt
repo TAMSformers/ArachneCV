@@ -19,7 +19,7 @@ option(OUTPUT_NATIVE "Compile for use by C++ programs." ON)
 #option(OUTPUT_CSHARP "Compile for use by C# programs." ON)
 #option(OUTPUT_JAVA "Compile for use by Java programs." ON)
 #option(OUTPUT_PERL "Compile for use by Perl programs." ON)
-option(OUTPUT_PYTHON "Compile for use by Python programs." OFF)
+option(OUTPUT_PYTHON "Compile for use by Python programs." ON)
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/ArachneCVConfig.h.in"
@@ -63,6 +63,18 @@ include_directories(${OpenCV_INCLUDE_PATH})
 
 set(CMAKE_SWIG_FLAGS "")
 
+configure_file(
+  "${PROJECT_SOURCE_DIR}/cmake_fix_makefile.py"
+  "${PROJECT_BINARY_DIR}/cmake_fix_makefile.py"
+)
+configure_file(
+  "${PROJECT_SOURCE_DIR}/cmake_fix_wrapper.py"
+  "${PROJECT_BINARY_DIR}/cmake_fix_wrapper.py"
+)
+add_custom_target(patch
+  COMMAND python cmake_fix_makefile.py
+)
+
 set_source_files_properties(ArachneCV.i PROPERTIES CPLUSPLUS ON)
 swig_add_module(ArachneCV python ArachneCV.i
   camera.cpp
@@ -70,6 +82,8 @@ swig_add_module(ArachneCV python ArachneCV.i
   targets.cpp
 )
 swig_link_libraries(ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES})
+
+add_dependencies(ArachneCV patch)
 
 if(${UNIX})
 execute_process(COMMAND python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
