@@ -10,7 +10,7 @@
 
 import ArachneCV as acv
 
-camera = acv.Camera(0, [0, 0, 4], 45, 90, 30);
+camera = acv.Camera(0, [0, 0, 4], 45, 90, 30)
 targets = acv.Targets()
 
 while (True):
@@ -19,5 +19,5 @@ while (True):
     camera.findTargets()
     camera.showFrame()
 
-    targets.merge(camera.targets)
+    targets.merge(camera.getTargets())
     targets.clear()

@@ -24,7 +24,7 @@ using acv::Target;
     return NULL;
   }
   if (PySequence_Length($input) != 3) {
-    PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected 4 elements");
+    PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected 3 elements");
     return NULL;
   }
   for (i = 0; i < 3; i++) {
@@ -49,6 +49,85 @@ using acv::Target;
 }
 */
 
+/*%typemap(in,numinputs=0) std::vector<acv::Target> {
+  std::cout << "Where does this go?" << std::endl;
+  std::vector<acv::Target> tmp_targets;
+  $1 = tmp_targets;
+}*/
+
+%typemap(in) std::vector<acv::Target> {
+  std::vector<acv::Target> tmp_targets(PySequence_Length($input));
+  if (!PySequence_Check($input)) {
+    PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+    return NULL;
+  }
+  for (int i = 0; i < PySequence_Length($input); i++) {
+    if (!PySequence_Check($input)) {
+      PyErr_SetString(PyExc_ValueError,"Expected a sequence of sequences");
+      return NULL;
+    }
+    if (PySequence_Length(PySequence_GetItem($input,i)) != 3) {
+      PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected 3 elements");
+      return NULL;
+    }
+    std::string type;
+    PyObject *py_type = PySequence_GetItem(PySequence_GetItem($input,i),0);
+    if (PyString_Check(py_type)) {
+      type = PyString_AsString(py_type);
+    } else {
+      PyErr_SetString(PyExc_ValueError,"type is not a string");
+      return NULL;
+    }
+    std::string color;
+    PyObject *py_color = PySequence_GetItem(PySequence_GetItem($input,i),1);
+    if (PyString_Check(py_color)) {
+      color = PyString_AsString(py_color);
+    } else {
+      PyErr_SetString(PyExc_ValueError,"color is not a string");
+      return NULL;
+    }
+    double coords[3];
+    for (int j = 0; j < 3; j++) {
+      PyObject *o = PySequence_GetItem(PySequence_GetItem(PySequence_GetItem($input,i),2),j);
+      if (PyNumber_Check(o)) {
+        coords[j] = (double) PyFloat_AsDouble(o);
+      } else {
+        PyErr_SetString(PyExc_ValueError,"coords elements must be numbers");
+        return NULL;
+      }
+    }
+    acv::Target tmp_target;
+    tmp_targets[i].type = type;
+    tmp_targets[i].color = color;
+    tmp_targets[i].coords[0] = coords[0];
+    tmp_targets[i].coords[1] = coords[1];
+    tmp_targets[i].coords[2] = coords[2];
+    tmp_targets[i].is_real = true;
+  }
+  $1 = tmp_targets;
+}
+
+//%typemap(in) std::vector< Target,std::allocator< acv::Target > > = std::vector<acv::Target>;
+%typemap(in,numinputs=0) std::vector< Target,std::allocator< acv::Target > > (std::vector<acv::Target> tmp_targets) {
+  $1 = tmp_targets;
+}
+
+%typemap(out) std::vector<acv::Target> {
+  $result = PyList_New(0);
+  for (int i = 0; i < $1.size(); i++) {
+    PyObject *py_target = PyList_New(3);
+    PyList_SetItem(py_target,0,PyString_FromString((&$1)[0][i].type.c_str()));
+    PyList_SetItem(py_target,1,PyString_FromString((&$1)[0][i].color.c_str()));
+    PyList_SetItem(py_target,2,PyList_New(3));
+    for (int j = 0; j < 3; j++) {
+      PyObject *o = PyFloat_FromDouble((double)((&$1)[0][i].coords[j]));
+      PyList_SetItem(PySequence_GetItem(py_target,2),j,o);
+    }
+  PyList_Append($result,py_target);
+  }
+}
+%typemap(out) std::vector< Target,std::allocator< acv::Target > > = std::vector<acv::Target>;
+
 %include stl.i
 
 %include "camera.hpp"
@@ -58,12 +137,14 @@ using acv::Target;
 
 %acv::Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in);
 %acv::Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
-%acv::Camera::GetFrame();
-%acv::Camera::GetFrameFromImage(std::string image);
-%acv::Camera::WarpPerspective();
-%acv::Camera::FindTargets();
-%acv::Camera::ShowFrame();
+%acv::Camera::getFrame();
+%acv::Camera::getFrameFromImage(std::string image);
+%acv::Camera::warpPerspective();
+%acv::Camera::findTargets();
+%acv::Camera::getTargets();
+%acv::Camera::showFrame();
 %acv::Camera::~Camera();
 
+%acv::Targets::get();
 %acv::Targets::merge(std::vector<acv::Target> input_targets);
 %acv::Targets::clear();

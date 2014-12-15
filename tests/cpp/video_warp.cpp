@@ -13,9 +13,9 @@
 
 int main()
 {
-  double cam_coords[3] = {1, 1, 1};
+  double cam_coords[3] = {1, 1, 25};
   acv::Camera camera("../media/video0.mp4", cam_coords, 45, 90, 50);
-  acv::Targets targets();
+  acv::Targets targets;
   while (true)
   {
     camera.getFrame();
@@ -23,7 +23,7 @@ int main()
     camera.findTargets();
     camera.showFrame();
 
-    targets.merge(camera.targets);
+    targets.merge(camera.getTargets());
     targets.clear();
   }
   return 0;

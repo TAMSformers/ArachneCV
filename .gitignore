@@ -2,4 +2,5 @@ build/
 
 tests/cpp/*
 !tests/cpp/*.cpp
-!tests/cpp/*.jpg
+
+*.swp

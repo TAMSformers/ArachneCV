@@ -40,7 +40,7 @@ Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int or
     exit(1);
 }
 
-Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft)
+Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in)
 {
   assert(0 < cam_angle < 90);
   cam_num = -1;
@@ -48,7 +48,8 @@ Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_
   cam_coords[1] = cam_coords_in[1];
   cam_coords[2] = cam_coords_in[2];
   cam_angle = cam_angle_in;
-  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft;
+  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft_in;
+  pix_per_ft = pix_per_ft_in;
   cam_orientation = orientation;
 
   capture = file_name_in;
@@ -161,6 +162,11 @@ void Camera::findTargets()
       targets.push_back(merge_targets[i]);
     }
   }
+}
+
+std::vector<Target> Camera::getTargets()
+{
+  return targets;
 }
 
 }

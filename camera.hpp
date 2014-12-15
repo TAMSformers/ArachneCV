@@ -29,13 +29,15 @@ namespace acv {
  */
 class Camera
 {
-  private:
+  protected:
     int cam_num; /*< camera number */
     double cam_coords[3]; /*< physical location */
     int cam_angle; /*< angle of declination, needed for warping */
     double cam_distance; /*< length of field of view captured by the camera from overhead */
     int pix_per_ft; /*< Number of pixels equaling a foot when warped. */
     int cam_orientation; /*< direction camera faces, measured counter-clockwise from front */
+
+    std::vector<Target> targets; /* holds all targets found in current frame */
 
     cv::VideoCapture capture; /*< video stream from camera */
     cv::Mat frame; /*< current frame from video stream */
@@ -46,10 +48,13 @@ class Camera
     void getFrame(); /**< retrieve next frame, should be run in a loop */
     void getFrameFromImage(std::string image); /**< load next frame from specified image instead of camera. useful for testing */
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
-    void findTargets();
+    void findTargets(); /**< processes image to locate targets and stores them internally */
     void showFrame(); /**< create a window if not opened and show the current frame */
-    std::vector<Target> targets;
+    std::vector<Target> getTargets(); /**< retrieves targets internally stored by findTargets */
 };
+
+class WarpCamera : protected Camera { };
+class DepthCamera : protected Camera { };
 
 }
 

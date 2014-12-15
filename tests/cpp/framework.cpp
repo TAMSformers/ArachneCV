@@ -19,7 +19,7 @@ int main()
   acv::Camera camera0(0, cam_coords0, 45, 90, 50);
   acv::Camera camera1(1, cam_coords1, 45, 90, 50);
 
-  acv::Targets targets();
+  acv::Targets targets;
 
   while (true) {
     camera0.getFrame();

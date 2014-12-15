@@ -16,28 +16,36 @@
 
 namespace acv{
 
+std::vector<Target> Targets::get()
+{
+  return targets;
+}
+
 void Targets::merge(std::vector<Target> input_targets)
 {
+  /* Make copy that we can change without side effects */
+  std::vector<Target> merge_targets(input_targets);
+
   /* Mark duplicates */
-  for (int i = 0; i < input_targets.size(); i++) {
+  for (int i = 0; i < merge_targets.size(); i++) {
     for (int j = 0; j < targets.size(); j++) {
-      if (sqrt(pow(input_targets[i].coords[0] - targets[j].coords[0], 2) +
-               pow(input_targets[i].coords[1] - targets[j].coords[1], 2)) < 3) {
-        input_targets[i].is_real = false;
+      if (sqrt(pow(merge_targets[i].coords[0] - targets[j].coords[0], 2) +
+               pow(merge_targets[i].coords[1] - targets[j].coords[1], 2)) < 3) {
+        merge_targets[i].is_real = false;
       }
     }
   }
 
-  /* Add all unmarked input_targets */
-  for (int i = 0; i < input_targets.size(); i++) {
-    if (input_targets[i].is_real) {
-      targets.push_back(input_targets[i]);
+  /* Add all unmarked merge_targets */
+  for (int i = 0; i < merge_targets.size(); i++) {
+    if (merge_targets[i].is_real) {
+      targets.push_back(merge_targets[i]);
     }
   }
 
   /* Debug information */
   for (int i = 0; i < targets.size(); i++) {
-    std::cout << targets[i].color << " " << targets[i].type << " " << targets[i].coords[0] << " " << targets[i].coords[1] << std::endl;
+    std::cout << targets[i].type << " " << targets[i].color << " " << targets[i].coords[0] << " " << targets[i].coords[1] << std::endl;
   }
   std::cout << std::endl;
 }

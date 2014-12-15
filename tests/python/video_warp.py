@@ -10,13 +10,14 @@
 
 import ArachneCV as acv
 
-camera = acv.Camera("../media/video0.mp4", [0, 0, 25], 10, 0, 1);
+camera = acv.Camera("../media/video0.mp4", [1, 1, 25], 45, 90, 50)
 targets = acv.Targets()
 
 while (True):
     camera.getFrame()
-    #camera.warpPerspective()
+    camera.warpPerspective()
     camera.findTargets()
     camera.showFrame()
-    targets.merge(camera.targets)
+
+    targets.merge(camera.getTargets())
     targets.clear()

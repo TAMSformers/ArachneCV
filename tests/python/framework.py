@@ -30,7 +30,7 @@ while (True):
     camera0.showFrame()
     camera1.showFrame()
 
-    targets.merge(camera0.targets)
-    targets.merge(camera1.targets)
+    targets.merge(camera0.getTargets())
+    targets.merge(camera1.getTargets())
 
     targets.clear()
