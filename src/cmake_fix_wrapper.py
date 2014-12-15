@@ -12,7 +12,7 @@
 
 import string as s
 
-wrapper_file = open("ArachneCVPYTHON_wrap.cxx", "r")
+wrapper_file = open("src/ArachneCVPYTHON_wrap.cxx", "r")
 wrapper_str = wrapper_file.read()
 wrapper_file.close()
 

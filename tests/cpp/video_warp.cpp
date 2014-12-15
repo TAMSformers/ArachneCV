@@ -11,10 +11,10 @@
 
 #include <ArachneCV/ArachneCV.hpp>
 
-int main()
+int main(int argc, char *argv[])
 {
   double cam_coords[3] = {1, 1, 25};
-  acv::Camera camera("../media/video0.mp4", cam_coords, 45, 90, 50);
+  acv::Camera camera(argv[1], cam_coords, 45, 90, 50);
   acv::Targets targets;
   while (true)
   {

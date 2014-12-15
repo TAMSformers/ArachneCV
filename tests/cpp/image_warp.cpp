@@ -11,14 +11,14 @@
 
 #include <ArachneCV/ArachneCV.hpp>
 
-int main()
+int main(int argc, char *argv[])
 {
   double cam_coords[3] = {0, 0, 1};
   acv::Camera camera(0, cam_coords, 45, 90, 50);
   acv::Targets targets;
   while (true)
   {
-    camera.getFrameFromImage("../media/image.jpg");
+    camera.getFrameFromImage(argv[1]);
     camera.warpPerspective();
     camera.findTargets();
     camera.showFrame();

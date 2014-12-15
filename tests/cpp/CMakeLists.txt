@@ -1,0 +1,24 @@
+#
+# Arachne CV
+#
+# Written by David Hashe and Jacob Brunson
+#
+#
+#
+add_custom_target(tests)
+
+add_dependencies(tests ArachneCV)
+
+add_executable(camera_warp camera_warp.cpp)
+add_executable(image_warp image_warp.cpp)
+add_executable(video_warp video_warp.cpp)
+
+add_dependencies(camera_warp tests)
+add_dependencies(image_warp tests)
+add_dependencies(video_warp tests)
+
+find_package(OpenCV REQUIRED)
+
+target_link_libraries(camera_warp ArachneCV ${OpenCV_LIBS})
+target_link_libraries(image_warp ArachneCV ${OpenCV_LIBS})
+target_link_libraries(video_warp ArachneCV ${OpenCV_LIBS})
