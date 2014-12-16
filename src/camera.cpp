@@ -5,7 +5,7 @@
  *
  *
  *
- * This file implements the camera frameframework.
+ * This file implements the camera framework.
  *
  */
 
@@ -23,64 +23,68 @@
 
 namespace acv {
 
-Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in)
+Camera::Camera(int cam_num, double coords[3], int declination, int orientation, int pix_per_ft)
 {
-  assert(0 < cam_angle < 90);
-  cam_num = cam_num_in;
-  cam_coords[0] = cam_coords_in[0];
-  cam_coords[1] = cam_coords_in[1];
-  cam_coords[2] = cam_coords_in[2];
-  cam_angle = cam_angle_in;
-  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft_in;
-  pix_per_ft = pix_per_ft_in;
-  cam_orientation = orientation;
+  assert(0 < declination < 90);
 
-  capture = cam_num_in;
-  if (!capture.isOpened())
+  m_cam_num = cam_num;
+  m_coords[0] = coords[0];
+  m_coords[1] = coords[1];
+  m_coords[2] = coords[2];
+  m_declination = declination;
+  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
+  m_pix_per_ft = pix_per_ft;
+  m_orientation = orientation;
+
+  /* initialize capture */
+  m_capture = cam_num;
+  if (!m_capture.isOpened())
     exit(1);
 }
 
-Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in)
+Camera::Camera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft)
 {
-  assert(0 < cam_angle < 90);
-  cam_num = -1;
-  cam_coords[0] = cam_coords_in[0];
-  cam_coords[1] = cam_coords_in[1];
-  cam_coords[2] = cam_coords_in[2];
-  cam_angle = cam_angle_in;
-  cam_distance = cam_coords[2] * tan((90 - cam_angle) * 3.1415 / 180) * pix_per_ft_in;
-  pix_per_ft = pix_per_ft_in;
-  cam_orientation = orientation;
+  assert(0 < declination < 90);
 
-  capture = file_name_in;
-  if (!capture.isOpened())
+  m_cam_num = -1;
+  m_coords[0] = coords[0];
+  m_coords[1] = coords[1];
+  m_coords[2] = coords[2];
+  m_declination = declination;
+  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
+  m_pix_per_ft = pix_per_ft;
+  m_orientation = orientation;
+
+  /* initialize capture */
+  m_capture = input_file;
+  if (!m_capture.isOpened())
     exit(1);
 }
 
 void Camera::getFrame()
 {
   /* Clear targets from last frame */
-  while (targets.size()) {
-    targets.pop_back();
+  while (m_targets.size()) {
+    m_targets.pop_back();
   }
 
-  capture >> frame;
+  m_capture >> m_frame;
 }
 
 void Camera::getFrameFromImage(std::string image)
 {
   /* Clear targets from last frame */
-  while (targets.size()) {
-    targets.pop_back();
+  while (m_targets.size()) {
+    m_targets.pop_back();
   }
 
-  frame = cv::imread(image, CV_LOAD_IMAGE_UNCHANGED);
+  m_frame = cv::imread(image, CV_LOAD_IMAGE_UNCHANGED);
 }
 
 void Camera::warpPerspective()
 {
   /* get camera size */
-  cv::Size cam_size = frame.size();
+  cv::Size cam_size = m_frame.size();
 
   /* point arrays to generate transform matrix */
   std::vector<cv::Point2f> src_pts(4);
@@ -97,7 +101,7 @@ void Camera::warpPerspective()
   src_pts[3] = S3;
 
   /* find transform from reference angle */
-//  if( cam_angle = 45 )
+//  if( m_declination = 45 )
 //  {
 //    cv::Point2f S0( 75.0, 200 );
 //    cv::Point2f S1( cam_size.width - 75.0, 200 );
@@ -111,7 +115,7 @@ void Camera::warpPerspective()
     /* hard-coded to 45 for now, exit if different */
 //    exit(1);
 //  }
-  float warp_factor = 90.0 / cam_angle;
+  float warp_factor = 90.0 / m_declination;
   cv::Size dsize(cam_size.width * warp_factor, cam_size.height);
   cv::Point2f D0(0.0, 0.0);
   cv::Point2f D1((float)dsize.width, 0.0);
@@ -127,14 +131,14 @@ void Camera::warpPerspective()
   M.convertTo(M, CV_32F);
 
   /* apply transform matrix */
-  cv::warpPerspective(frame, frame, M, dsize);
+  cv::warpPerspective(m_frame, m_frame, M, dsize);
 }
 
 void Camera::showFrame()
 {
   char frame_name[10];
-  sprintf(frame_name, "Camera %d", cam_num);
-  cv::imshow(frame_name, frame);
+  sprintf(frame_name, "Camera %d", m_cam_num);
+  cv::imshow(frame_name, m_frame);
   cv::waitKey(30);
 }
 
@@ -144,14 +148,14 @@ void Camera::findTargets()
 
   for (int i = 0; i < 2; i++) {
     std::vector<Target> merge_targets;
-    findTargetsInFrame(frame, merge_targets, colors[i], cam_distance, pix_per_ft);
+    findTargetsInFrame(m_frame, merge_targets, colors[i], m_distance, m_pix_per_ft);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
     Target tmp_target;
     for (int i = 0; i < merge_targets.size(); i++) {
 //        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-      tmp_target.coords[0] = cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-      tmp_target.coords[1] = sin(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(cam_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+      tmp_target.coords[0] = cos(m_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(m_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
+      tmp_target.coords[1] = sin(m_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(m_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
       merge_targets[i].coords[0] = tmp_target.coords[0];
       merge_targets[i].coords[1] = tmp_target.coords[1];
 //        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
@@ -159,14 +163,14 @@ void Camera::findTargets()
 
     /* Add converted targets to array */
     for (int i = 0; i < merge_targets.size(); i++) {
-      targets.push_back(merge_targets[i]);
+      m_targets.push_back(merge_targets[i]);
     }
   }
 }
 
 std::vector<Target> Camera::getTargets()
 {
-  return targets;
+  return m_targets;
 }
 
 }

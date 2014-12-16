@@ -28,7 +28,7 @@ typedef struct {
 class Targets
 {
   private:
-    std::vector<Target> targets;
+    std::vector<Target> m_targets;
   public:
     std::vector<acv::Target> get();
     void merge(std::vector<Target> input_targets);

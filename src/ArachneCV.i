@@ -127,18 +127,3 @@ using acv::Target;
 %include "camera.hpp"
 %include "targets.hpp"
 %include "image_analysis.hpp"
-
-
-%acv::Camera::Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft_in);
-%acv::Camera::Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft);
-%acv::Camera::getFrame();
-%acv::Camera::getFrameFromImage(std::string image);
-%acv::Camera::warpPerspective();
-%acv::Camera::findTargets();
-%acv::Camera::getTargets();
-%acv::Camera::showFrame();
-%acv::Camera::~Camera();
-
-%acv::Targets::get();
-%acv::Targets::merge(std::vector<acv::Target> input_targets);
-%acv::Targets::clear();

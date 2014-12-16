@@ -30,21 +30,20 @@ namespace acv {
 class Camera
 {
   protected:
-    int cam_num; /*< camera number */
-    double cam_coords[3]; /*< physical location */
-    int cam_angle; /*< angle of declination, needed for warping */
-    double cam_distance; /*< length of field of view captured by the camera from overhead */
-    int pix_per_ft; /*< Number of pixels equaling a foot when warped. */
-    int cam_orientation; /*< direction camera faces, measured counter-clockwise from front */
+    int m_cam_num; /*< camera number, -1 if video stream */
+    double m_coords[3]; /*< physical location */
+    int m_declination; /*< angle of declination, needed for warping */
+    int m_orientation; /*< direction camera faces, measured counter-clockwise from front */
+    int m_pix_per_ft; /*< Number of pixels equaling a foot when warped. */
 
-    std::vector<Target> targets; /* holds all targets found in current frame */
-
-    cv::VideoCapture capture; /*< video stream from camera */
-    cv::Mat frame; /*< current frame from video stream */
+    double m_distance; /*< length of field of view captured by the camera from overhead */
+    std::vector<Target> m_targets; /* holds all targets found in current frame */
+    cv::VideoCapture m_capture; /*< video stream from camera */
+    cv::Mat m_frame; /*< current frame from video stream */
 
   public:
-    Camera(int cam_num_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft); /**< webcam constructor */
-    Camera(std::string file_name_in, double cam_coords_in[3], int cam_angle_in, int orientation, int pix_per_ft); /**< video file constructor */
+    Camera(int cam_num, double coords[3], int declination, int orientation, int pix_per_ft); /**< webcam constructor */
+    Camera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft); /**< video file constructor */
     void getFrame(); /**< retrieve next frame, should be run in a loop */
     void getFrameFromImage(std::string image); /**< load next frame from specified image instead of camera. useful for testing */
     void warpPerspective(); /**< warp image to generate overhead view from angled camera */
@@ -53,8 +52,13 @@ class Camera
     std::vector<Target> getTargets(); /**< retrieves targets internally stored by findTargets */
 };
 
-class WarpCamera : protected Camera { };
-class DepthCamera : protected Camera { };
+class WarpCamera : protected Camera {
+
+};
+
+class DepthCamera : protected Camera { 
+
+};
 
 }
 
