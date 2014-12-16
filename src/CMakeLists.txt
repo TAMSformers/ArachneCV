@@ -62,7 +62,7 @@ configure_file(
 )
 configure_file(
   "${PROJECT_SOURCE_DIR}/src/cmake_fix_wrapper.py"
-  "${PROJECT_BINARY_DIR}/cmake_fix_wrapper.py"
+  "${PROJECT_BINARY_DIR}/src/cmake_fix_wrapper.py"
 )
 add_custom_target(patch
   COMMAND python cmake_fix_makefile.py

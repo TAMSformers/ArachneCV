@@ -5,6 +5,9 @@
 #
 #
 #
+
+if(OUTPUT_NATIVE)
+
 add_custom_target(tests)
 
 add_dependencies(tests ArachneCV)
@@ -22,3 +25,5 @@ find_package(OpenCV REQUIRED)
 target_link_libraries(camera_warp ArachneCV ${OpenCV_LIBS})
 target_link_libraries(image_warp ArachneCV ${OpenCV_LIBS})
 target_link_libraries(video_warp ArachneCV ${OpenCV_LIBS})
+
+endif(OUTPUT_NATIVE)

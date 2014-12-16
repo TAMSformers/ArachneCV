@@ -49,12 +49,6 @@ using acv::Target;
 }
 */
 
-/*%typemap(in,numinputs=0) std::vector<acv::Target> {
-  std::cout << "Where does this go?" << std::endl;
-  std::vector<acv::Target> tmp_targets;
-  $1 = tmp_targets;
-}*/
-
 %typemap(in) std::vector<acv::Target> {
   std::vector<acv::Target> tmp_targets(PySequence_Length($input));
   if (!PySequence_Check($input)) {
@@ -66,8 +60,8 @@ using acv::Target;
       PyErr_SetString(PyExc_ValueError,"Expected a sequence of sequences");
       return NULL;
     }
-    if (PySequence_Length(PySequence_GetItem($input,i)) != 3) {
-      PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected 3 elements");
+    if (PySequence_Length(PySequence_GetItem($input,i)) != 4) {
+      PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected 4 elements");
       return NULL;
     }
     std::string type;
@@ -107,15 +101,14 @@ using acv::Target;
   $1 = tmp_targets;
 }
 
-//%typemap(in) std::vector< Target,std::allocator< acv::Target > > = std::vector<acv::Target>;
-%typemap(in,numinputs=0) std::vector< Target,std::allocator< acv::Target > > (std::vector<acv::Target> tmp_targets) {
+/*%typemap(in,numinputs=0) std::vector< Target,std::allocator< acv::Target > > (std::vector<acv::Target> tmp_targets) {
   $1 = tmp_targets;
-}
+}*/
 
 %typemap(out) std::vector<acv::Target> {
   $result = PyList_New(0);
   for (int i = 0; i < $1.size(); i++) {
-    PyObject *py_target = PyList_New(3);
+    PyObject *py_target = PyList_New(4);
     PyList_SetItem(py_target,0,PyString_FromString((&$1)[0][i].type.c_str()));
     PyList_SetItem(py_target,1,PyString_FromString((&$1)[0][i].color.c_str()));
     PyList_SetItem(py_target,2,PyList_New(3));
@@ -123,7 +116,8 @@ using acv::Target;
       PyObject *o = PyFloat_FromDouble((double)((&$1)[0][i].coords[j]));
       PyList_SetItem(PySequence_GetItem(py_target,2),j,o);
     }
-  PyList_Append($result,py_target);
+    PyList_SetItem(py_target,3,PyList_New(0));
+    PyList_Append($result,py_target);
   }
 }
 %typemap(out) std::vector< Target,std::allocator< acv::Target > > = std::vector<acv::Target>;

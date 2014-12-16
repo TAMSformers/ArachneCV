@@ -39,7 +39,7 @@ end_str = wrapper_str[second_index:]
 # Combine with new command in middle
 wrapper_str = begin_str + "\n      _v = 1;" + middle_str + "\n      _v = 1;" + end_str
 
-wrapper_file = open("ArachneCVPYTHON_wrap.cxx", "w")
+wrapper_file = open("src/ArachneCVPYTHON_wrap.cxx", "w")
 wrapper_file.write(wrapper_str)
 wrapper_file.close()
 

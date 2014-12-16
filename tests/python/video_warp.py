@@ -9,8 +9,9 @@
 #
 
 import ArachneCV as acv
+import sys
 
-camera = acv.Camera("../media/video0.mp4", [1, 1, 25], 45, 90, 50)
+camera = acv.Camera(sys.argv[1], [1, 1, 25], 45, 90, 50)
 targets = acv.Targets()
 
 while (True):

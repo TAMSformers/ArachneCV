@@ -28,7 +28,7 @@ begin_str = makefile_str[:index]
 end_str = makefile_str[index:]
 
 # Combine with new command in middle
-makefile_str = begin_str + "\tpython cmake_fix_wrapper.py\n" + end_str
+makefile_str = begin_str + "\tpython src/cmake_fix_wrapper.py\n" + end_str
 
 makefile_file = open("CMakeFiles/_ArachneCV.dir/build.make", "w")
 makefile_file.write(makefile_str)
