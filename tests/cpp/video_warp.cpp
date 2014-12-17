@@ -9,12 +9,17 @@
  *
  */
 
-#include <ArachneCV/ArachneCV.hpp>
+#include "../../src/ArachneCV.hpp"
 
 int main(int argc, char *argv[])
 {
+  if (argc != 2) {
+    std::cout << "Usage: video_warp [input file]" << std::endl;
+    return 0;
+  }
+
   double cam_coords[3] = {1, 1, 25};
-  acv::Camera camera(argv[1], cam_coords, 45, 90, 50);
+  acv::WarpCamera camera(argv[1], cam_coords, 45, 90, 50);
   acv::Targets targets;
   while (true)
   {

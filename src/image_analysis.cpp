@@ -83,8 +83,6 @@ void findPossibleBallsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std
 {
   /* modified frame for mask */
   cv::Mat mask;
-  /* modified frame end result */
-//  cv::Mat frame_out;
 
   /* bounds for inRange (in HSV color space) */
   int lower_bound_array[3] = {-1, 120, 0};
@@ -107,9 +105,6 @@ void findPossibleBallsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std
   cv::cvtColor(frame, mask, CV_BGR2HSV, 0);
   cv::medianBlur(mask, mask, 99);
   cv::inRange(mask, lower_bound, upper_bound, mask);
-
-  /* apply mask */
-//  cv::bitwise_and(frame, frame, frame_out, mask);
 
   /* vector to hold detected circles */
   std::vector<cv::Vec3f> circles;
@@ -134,8 +129,6 @@ void findPossibleRobotsInFrame(cv::Mat frame, std::vector<Target> &r_targets, st
 {
   /* modified frame for mask */
   cv::Mat mask;
-  /* modified frame end result */
-//  cv::Mat frame_out;
 
   /* bounds for inRange (in HSV color space) */
   int lower_bound_array[3] = {-1, 120, 0};
@@ -158,9 +151,6 @@ void findPossibleRobotsInFrame(cv::Mat frame, std::vector<Target> &r_targets, st
   cv::cvtColor(frame, mask, CV_BGR2HSV, 0);
   cv::medianBlur(mask, mask, 45);
   cv::inRange(mask, lower_bound, upper_bound, mask);
-
-  /* apply mask */
-//  cv::bitwise_and(frame, frame, frame_out, mask);
 
   /* vector to hold detected robots */
   std::vector<cv::Vec2f> robots;

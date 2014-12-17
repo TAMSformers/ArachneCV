@@ -11,7 +11,6 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "ArachneCVConfig.h"
 #include "targets.hpp"
 
 namespace acv{

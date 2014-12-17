@@ -16,28 +16,30 @@ wrapper_file = open("src/ArachneCVPYTHON_wrap.cxx", "r")
 wrapper_str = wrapper_file.read()
 wrapper_file.close()
 
-# Navigate to place to insert command
-index = s.find(wrapper_str, "_wrap_new_Camera(PyObject *self, PyObject *args)")
+for string in ["_wrap_new_WarpCamera(", "_wrap_new_DepthCamera("]:
+    # Navigate to place to insert command
+    index = s.find(wrapper_str, string)
 
-# First instance
-index = s.find(wrapper_str,"SWIG_ConvertPtr", index)
-for i in xrange(2):
-    index = s.find(wrapper_str,"\n", index+1)
-first_index = index
+    # First instance
+    index = s.find(wrapper_str,"SWIG_ConvertPtr", index)
+    for i in xrange(2):
+        index = s.find(wrapper_str,"\n", index+1)
+    first_index = index
 
-# Second instance
-index = s.find(wrapper_str,"SWIG_ConvertPtr", index)
-for i in xrange(2):
-    index = s.find(wrapper_str,"\n", index+1)
-second_index = index
+    # Second instance
+    index = s.find(wrapper_str,"SWIG_ConvertPtr", index)
+    for i in xrange(2):
+        index = s.find(wrapper_str,"\n", index+1)
+    second_index = index
 
-# Split file into three strings at those points
-begin_str = wrapper_str[:first_index]
-middle_str = wrapper_str[first_index:second_index]
-end_str = wrapper_str[second_index:]
+    # Split file into three strings at those points
+    begin_str = wrapper_str[:first_index]
+    middle_str = wrapper_str[first_index:second_index]
+    end_str = wrapper_str[second_index:]
 
-# Combine with new command in middle
-wrapper_str = begin_str + "\n      _v = 1;" + middle_str + "\n      _v = 1;" + end_str
+    # Combine with new command in middle
+    wrapper_str = begin_str + "\n      _v = 1;" + \
+                  middle_str + "\n      _v = 1;" + end_str
 
 wrapper_file = open("src/ArachneCVPYTHON_wrap.cxx", "w")
 wrapper_file.write(wrapper_str)

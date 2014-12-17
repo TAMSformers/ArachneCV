@@ -18,20 +18,62 @@
 
 namespace acv {
 
-typedef struct {
-  std::string type; /**< either robot, ball, or some other target */
-  std::string color; /**< either red or blue */
-  double coords[3]; /**< coordinates in 3-space */
+/**
+ * A ball, robot, etc.
+ */
+typedef struct
+{
+  /**
+   * Identity of target. Usually either robot or ball.
+   */
+  std::string type;
+
+  /**
+   * Either red or blue.
+   */
+  std::string color;
+
+  /**
+   * Coordinates in 3D space relative to the center of the robot.
+   */
+  double coords[3];
+
+  /**
+   * Used within image_analysis to mark false positives.
+   */
   bool is_real = true;
 } Target;
 
+/**
+ * A collection of targets.
+ */
 class Targets
 {
   private:
+
+    /**
+     * Vector of targets. Usually holds targets from several different
+     * cameras.
+     */
     std::vector<Target> m_targets;
+
   public:
+
+    /**
+     * Retrieve targets stored internally by merge().
+     */
     std::vector<acv::Target> get();
+
+    /**
+     * Add targets to internal collection.
+     *
+     * @param[in] input_targets Targets to be added.
+     */
     void merge(std::vector<Target> input_targets);
+
+    /**
+     * Clear targets stored internally by merge().
+     */
     void clear();
 };
 

@@ -19,47 +19,13 @@
 #include "image_analysis.hpp"
 #include "targets.hpp"
 
-#include "ArachneCVConfig.h"
-
 namespace acv {
 
-Camera::Camera(int cam_num, double coords[3], int declination, int orientation, int pix_per_ft)
-{
-  assert(0 < declination < 90);
-
-  m_cam_num = cam_num;
-  m_coords[0] = coords[0];
-  m_coords[1] = coords[1];
-  m_coords[2] = coords[2];
-  m_declination = declination;
-  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
-  m_pix_per_ft = pix_per_ft;
-  m_orientation = orientation;
-
-  /* initialize capture */
-  m_capture = cam_num;
-  if (!m_capture.isOpened())
-    exit(1);
-}
-
-Camera::Camera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft)
-{
-  assert(0 < declination < 90);
-
-  m_cam_num = -1;
-  m_coords[0] = coords[0];
-  m_coords[1] = coords[1];
-  m_coords[2] = coords[2];
-  m_declination = declination;
-  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
-  m_pix_per_ft = pix_per_ft;
-  m_orientation = orientation;
-
-  /* initialize capture */
-  m_capture = input_file;
-  if (!m_capture.isOpened())
-    exit(1);
-}
+/****************************************************************************
+ *
+ * class Camera
+ *
+ ****************************************************************************/
 
 void Camera::getFrame()
 {
@@ -81,7 +47,66 @@ void Camera::getFrameFromImage(std::string image)
   m_frame = cv::imread(image, CV_LOAD_IMAGE_UNCHANGED);
 }
 
-void Camera::warpPerspective()
+
+void Camera::showFrame()
+{
+  char frame_name[10];
+  sprintf(frame_name, "Camera %d", m_cam_num);
+  cv::imshow(frame_name, m_frame);
+  cv::waitKey(30);
+}
+
+
+std::vector<Target> Camera::getTargets()
+{
+  return m_targets;
+}
+
+/****************************************************************************
+ *
+ * class WarpCamera
+ *
+ ****************************************************************************/
+
+WarpCamera::WarpCamera(int cam_num, double coords[3], int declination, int orientation, int pix_per_ft)
+{
+  assert(0 < declination < 90);
+
+  m_cam_num = cam_num;
+  m_coords[0] = coords[0];
+  m_coords[1] = coords[1];
+  m_coords[2] = coords[2];
+  m_declination = declination;
+  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
+  m_pix_per_ft = pix_per_ft;
+  m_orientation = orientation;
+
+  /* initialize capture */
+  m_capture = cam_num;
+  if (!m_capture.isOpened())
+    exit(1);
+}
+
+WarpCamera::WarpCamera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft)
+{
+  assert(0 < declination < 90);
+
+  m_cam_num = -1;
+  m_coords[0] = coords[0];
+  m_coords[1] = coords[1];
+  m_coords[2] = coords[2];
+  m_declination = declination;
+  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
+  m_pix_per_ft = pix_per_ft;
+  m_orientation = orientation;
+
+  /* initialize capture */
+  m_capture = input_file;
+  if (!m_capture.isOpened())
+    exit(1);
+}
+
+void WarpCamera::warpPerspective()
 {
   /* get camera size */
   cv::Size cam_size = m_frame.size();
@@ -101,20 +126,6 @@ void Camera::warpPerspective()
   src_pts[3] = S3;
 
   /* find transform from reference angle */
-//  if( m_declination = 45 )
-//  {
-//    cv::Point2f S0( 75.0, 200 );
-//    cv::Point2f S1( cam_size.width - 75.0, 200 );
-//    cv::Point2f S2((float)cam_size.width, (float)cam_size.height );
-//    cv::Point2f S3( 0.0 , (float)cam_size.height );
-//    src_pts[ 0 ] = S0;
-//    src_pts[ 1 ] = S1;
-//    src_pts[ 2 ] = S2;
-//    src_pts[ 3 ] = S3;
-//  } else {
-    /* hard-coded to 45 for now, exit if different */
-//    exit(1);
-//  }
   float warp_factor = 90.0 / m_declination;
   cv::Size dsize(cam_size.width * warp_factor, cam_size.height);
   cv::Point2f D0(0.0, 0.0);
@@ -134,15 +145,7 @@ void Camera::warpPerspective()
   cv::warpPerspective(m_frame, m_frame, M, dsize);
 }
 
-void Camera::showFrame()
-{
-  char frame_name[10];
-  sprintf(frame_name, "Camera %d", m_cam_num);
-  cv::imshow(frame_name, m_frame);
-  cv::waitKey(30);
-}
-
-void Camera::findTargets()
+void WarpCamera::findTargets()
 {
   std::string colors[2] = {"red", "blue"};
 
@@ -168,9 +171,38 @@ void Camera::findTargets()
   }
 }
 
-std::vector<Target> Camera::getTargets()
+/****************************************************************************
+ *
+ * class DepthCamera
+ *
+ ****************************************************************************/
+
+DepthCamera::DepthCamera(int cam_num, double coords[3], int orientation)
 {
-  return m_targets;
+  m_cam_num = cam_num;
+  m_coords[0] = coords[0];
+  m_coords[1] = coords[1];
+  m_coords[2] = coords[2];
+  m_orientation = orientation;
+
+  /* initialize capture */
+  m_capture = cam_num;
+  if (!m_capture.isOpened())
+    exit(1);
+}
+
+DepthCamera::DepthCamera(std::string input_file, double coords[3], int orientation)
+{
+  m_cam_num = -1;
+  m_coords[0] = coords[0];
+  m_coords[1] = coords[1];
+  m_coords[2] = coords[2];
+  m_orientation = orientation;
+
+  /* initialize capture */
+  m_capture = input_file;
+  if (!m_capture.isOpened())
+    exit(1);
 }
 
 }

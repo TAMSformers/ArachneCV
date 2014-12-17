@@ -9,12 +9,12 @@
  *
  */
 
-#include <ArachneCV/ArachneCV.hpp>
+#include "../../src/ArachneCV.hpp"
 
 int main()
 {
   double cam_coords[3] = {1, 1, 1};
-  acv::Camera camera0(0, cam_coords, 45, 90, 50);
+  acv::WarpCamera camera0(0, cam_coords, 45, 90, 50);
   acv::Targets targets;
   while (true)
   {

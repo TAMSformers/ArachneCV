@@ -11,7 +11,11 @@
 import ArachneCV as acv
 import sys
 
-camera = acv.Camera(sys.argv[1], [1, 1, 25], 45, 90, 50)
+if len(sys.argv) != 2:
+    print "Usage: video_warp.py [input file]"
+    quit()
+
+camera = acv.WarpCamera(sys.argv[1], [1, 1, 25], 45, 90, 50)
 targets = acv.Targets()
 
 while (True):

@@ -14,11 +14,6 @@ option(OUTPUT_NATIVE "Compile for use by C++ programs." ON)
 #option(OUTPUT_PERL "Compile for use by Perl programs." ON)
 option(OUTPUT_PYTHON "Compile for use by Python programs." ON)
 
-configure_file(
-  "${PROJECT_SOURCE_DIR}/src/ArachneCVConfig.h.in"
-  "${PROJECT_BINARY_DIR}/src/ArachneCVConfig.h"
-)
-
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_BINARY_DIR}/src")
 
@@ -37,7 +32,7 @@ find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
 
 install(TARGETS ArachneCV DESTINATION lib)
-install(FILES "${PROJECT_BINARY_DIR}/src/ArachneCVConfig.h" ArachneCV.hpp camera.hpp image_analysis.hpp targets.hpp DESTINATION "include/ArachneCV")
+install(FILES ArachneCV.hpp camera.hpp image_analysis.hpp targets.hpp DESTINATION "include/ArachneCV")
 
 endif(OUTPUT_NATIVE)
 
