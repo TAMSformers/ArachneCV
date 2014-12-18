@@ -21,6 +21,10 @@
 
 namespace acv {
 
+/* Helper functions */
+void reorientTargets(std::vector<Target> &r_targets, double coords[3], int orientation);
+void clearTargets(std::vector<Target> &r_targets);
+
 /****************************************************************************
  *
  * class Camera
@@ -30,23 +34,10 @@ namespace acv {
 void Camera::getFrame()
 {
   /* Clear targets from last frame */
-  while (m_targets.size()) {
-    m_targets.pop_back();
-  }
+  clearTargets(m_targets);
 
   m_capture >> m_frame;
 }
-
-void Camera::getFrameFromImage(std::string image)
-{
-  /* Clear targets from last frame */
-  while (m_targets.size()) {
-    m_targets.pop_back();
-  }
-
-  m_frame = cv::imread(image, CV_LOAD_IMAGE_UNCHANGED);
-}
-
 
 void Camera::showFrame()
 {
@@ -106,6 +97,14 @@ WarpCamera::WarpCamera(std::string input_file, double coords[3], int declination
     exit(1);
 }
 
+void WarpCamera::getFrameFromImage(std::string image)
+{
+  /* Clear targets from last frame */
+  clearTargets(m_targets);
+
+  m_frame = cv::imread(image, CV_LOAD_IMAGE_UNCHANGED);
+}
+
 void WarpCamera::warpPerspective()
 {
   /* get camera size */
@@ -151,18 +150,10 @@ void WarpCamera::findTargets()
 
   for (int i = 0; i < 2; i++) {
     std::vector<Target> merge_targets;
-    findTargetsInFrame(m_frame, merge_targets, colors[i], m_distance, m_pix_per_ft);
+    findTargetsWarp(m_frame, merge_targets, colors[i], m_distance, m_pix_per_ft);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
-    Target tmp_target;
-    for (int i = 0; i < merge_targets.size(); i++) {
-//        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-      tmp_target.coords[0] = cos(m_orientation * 3.141592 / 180) * merge_targets[i].coords[0] - sin(m_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-      tmp_target.coords[1] = sin(m_orientation * 3.141592 / 180) * merge_targets[i].coords[0] + cos(m_orientation * 3.141592 / 180) * merge_targets[i].coords[1];
-      merge_targets[i].coords[0] = tmp_target.coords[0];
-      merge_targets[i].coords[1] = tmp_target.coords[1];
-//        printf("%f %f %f\n", (float)merge_targets[i].coords[0], (float)merge_targets[i].coords[1], (float)merge_targets[i].coords[2]);
-    }
+    reorientTargets(merge_targets, m_coords, m_orientation);
 
     /* Add converted targets to array */
     for (int i = 0; i < merge_targets.size(); i++) {
@@ -170,6 +161,7 @@ void WarpCamera::findTargets()
     }
   }
 }
+
 
 /****************************************************************************
  *
@@ -203,6 +195,73 @@ DepthCamera::DepthCamera(std::string input_file, double coords[3], int orientati
   m_capture = input_file;
   if (!m_capture.isOpened())
     exit(1);
+}
+
+void DepthCamera::getFrame()
+{
+  /* Clear targets from last frame */
+  clearTargets(m_targets);
+
+  m_capture.grab();
+  m_capture.retrieve(m_frame_depth, CV_CAP_OPENNI_DEPTH_MAP);
+  m_capture.retrieve(m_frame, CV_CAP_OPENNI_BGR_IMAGE);
+}
+
+void DepthCamera::findTargets()
+{
+  std::string colors[2] = {"red", "blue"};
+
+  for (int i = 0; i < 2; i++) {
+    std::vector<Target> merge_targets;
+    findTargetsDepth(m_frame, m_frame_depth, merge_targets, colors[i]);
+
+    /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
+    reorientTargets(merge_targets, m_coords, m_orientation);
+
+    /* Add converted targets to array */
+    for (int i = 0; i < merge_targets.size(); i++) {
+      m_targets.push_back(merge_targets[i]);
+    }
+  }
+}
+
+
+/****************************************************************************
+ *
+ * Helper functions
+ *
+ ****************************************************************************/
+
+void reorientTargets(std::vector<Target> &r_targets, double coords[3], int orientation)
+{
+  Target tmp_target;
+
+  for (int i = 0; i < r_targets.size(); i++) {
+    /* Rotate target */
+//      printf("%f %f %f\n", (float)r_targets[i].coords[0],
+//            (float)r_targets[i].coords[1], (float)r_targets[i].coords[2]);
+    tmp_target.coords[0] =
+               cos(orientation * 3.141592 / 180) * r_targets[i].coords[0] -
+               sin(orientation * 3.141592 / 180) * r_targets[i].coords[1];
+    tmp_target.coords[1] =
+               sin(orientation * 3.141592 / 180) * r_targets[i].coords[0] +
+               cos(orientation * 3.141592 / 180) * r_targets[i].coords[1];
+    r_targets[i].coords[0] = tmp_target.coords[0];
+    r_targets[i].coords[1] = tmp_target.coords[1];
+//        printf("%f %f %f\n", (float)r_targets[i].coords[0],
+//              (float)r_targets[i].coords[1], (float)r_targets[i].coords[2]);
+
+    /* Translate / slide target */
+    r_targets[i].coords[0] += coords[0];
+    r_targets[i].coords[1] += coords[1];
+  }
+}
+
+void clearTargets(std::vector<Target> &r_targets)
+{
+  while (r_targets.size()) {
+    r_targets.pop_back();
+  }
 }
 
 }

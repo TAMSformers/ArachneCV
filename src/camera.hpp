@@ -72,14 +72,6 @@ class Camera
     void getFrame();
 
     /**
-     * Retrieve next frame from an image, ignoring the stream. Useful for
-     * debugging.
-     *
-     * @param[in] image Image file path. Relative or absolute.
-     */
-    void getFrameFromImage(std::string image);
-
-    /**
      * Creates a window if not opened and shows the current frame.
      */
     void showFrame();
@@ -137,6 +129,14 @@ class WarpCamera : public Camera
     WarpCamera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft);
 
     /**
+     * Retrieve next frame from an image, ignoring the stream. Useful for
+     * debugging.
+     *
+     * @param[in] image Image file path. Relative or absolute.
+     */
+    void getFrameFromImage(std::string image);
+
+    /**
      * Warp current frame to generate overhead view.
      */
     void warpPerspective();
@@ -154,6 +154,11 @@ class WarpCamera : public Camera
 class DepthCamera : public Camera
 {
   protected:
+
+    /**
+     * Holds depth data for current frame.
+     */
+     cv::Mat m_frame_depth;
 
   public:
 
@@ -173,6 +178,17 @@ class DepthCamera : public Camera
      * @param[in] orientation Horizontal angle counterclockwise from the front in degrees.
      */
     DepthCamera(std::string input_file, double coords[3], int orientation);
+
+    /**
+     * Retrieve next frame from stream.
+     */
+    void getFrame();
+
+    /**
+     * Process current frame to locate targets (balls, robots, etc.).
+     * Stores results internally.
+     */
+    void findTargets();
 };
 
 }

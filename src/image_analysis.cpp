@@ -10,22 +10,34 @@
  */
 
 #include <opencv2/opencv.hpp>
+#include <cmath>
 
 #include "targets.hpp"
 
 namespace acv {
 
-void findPossibleBallsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft);
-void findPossibleRobotsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft);
+void findPossibleBallsColor(cv::Mat frame, std::vector<Target> &r_targets,
+                            std::string color, int pix_per_ft);
+void findPossibleRobotsColor(cv::Mat frame, std::vector<Target> &r_targets,
+                             std::string color, int pix_per_ft,
+                             std::vector<std::vector<cv::Point>> &r_contours);
+void convertPossibleTargetsWarp(std::vector<Target> &r_targets, cv::Mat frame,
+                                double distance);
 
-void findTargetsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft)
+void findPossibleBallsDepth(cv::Mat depth, std::vector<Target> &r_targets, std::string color);
+void convertPossibleTargetsDepth(std::vector<Target> &r_targets, cv::Mat depth);
+
+void findTargetsWarp(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft)
 {
   std::vector<Target> ball_targets;
   std::vector<Target> robot_targets;
+  std::vector<std::vector<cv::Point>> contours;
 
   /* Find each category of targets. These functions are not exposed globablly and WILL give incorrect results without the below checks. */
-  findPossibleBallsInFrame(frame, ball_targets, color, distance, pix_per_ft);
-  findPossibleRobotsInFrame(frame, robot_targets, color, distance, pix_per_ft);
+  findPossibleBallsColor(frame, ball_targets, color, pix_per_ft);
+  convertPossibleTargetsWarp(ball_targets, frame, distance);
+  findPossibleRobotsColor(frame, robot_targets, color, pix_per_ft, contours);
+  convertPossibleTargetsWarp(robot_targets, frame, distance);
 
   /* If a ball is not very close to any "robots", it is probably of the other color. */
   /* If a "robot" is very close to a ball, it probably is the ball and not a robot. */
@@ -79,7 +91,77 @@ void findTargetsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std::stri
   }
 }
 
-void findPossibleBallsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft)
+void findTargetsDepth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets, std::string color)
+{
+  /* detect balls by depth */
+  std::vector<Target> ball_depth_targets;
+  findPossibleBallsDepth(depth, ball_depth_targets, color);
+
+  /* detect color fields */
+  std::vector<Target> robot_color_targets;
+  std::vector<std::vector<cv::Point>> contours;
+  findPossibleRobotsColor(frame, robot_color_targets, color, 5, contours);
+
+  /* determine which balls are the correct color */
+  for (int i = 0; i < ball_depth_targets.size(); i++) {
+    ball_depth_targets[i].is_real = false;
+    for (int j = 0; j < robot_color_targets.size(); j++) {
+      if (sqrt(pow(robot_color_targets[j].coords[0] -
+                   ball_depth_targets[i].coords[0], 2) +
+               pow(robot_color_targets[j].coords[1] -
+                   ball_depth_targets[i].coords[1], 2)) <
+          ball_depth_targets[i].coords[2]) {
+        ball_depth_targets[i].is_real = true;
+        break;
+      }
+    }
+  }
+
+  /* detect robots from size of color fields */
+  for (int i = 0; i < robot_color_targets.size(); i++) {
+    robot_color_targets[i].is_real = false;
+    int robot_depth = depth.at<uchar>(robot_color_targets[i].coords[0],robot_color_targets[i].coords[1]) / 305.0;
+    float width_ft = 2 * robot_depth * tan(57 / 2);
+    int pix_per_ft = depth.size().width / width_ft;
+    if (cv::contourArea(contours[i]) / pow(pix_per_ft, 2) > 2) {
+      robot_color_targets[i].is_real = true;
+    }
+  }
+
+  /* convert coordinates */
+  convertPossibleTargetsDepth(ball_depth_targets, depth);
+  convertPossibleTargetsDepth(robot_color_targets, depth);
+
+  /* If a "robot" is very close to a ball, it probably is the ball and not a robot. */
+  for (int i = 0; i < ball_depth_targets.size(); i++) {
+    ball_depth_targets[i].is_real = false;
+    for (int j = 0; j < robot_color_targets.size(); j++) {
+      if (sqrt(pow(robot_color_targets[j].coords[0] -
+                   ball_depth_targets[i].coords[0], 2) +
+               pow(robot_color_targets[j].coords[1] -
+                   ball_depth_targets[i].coords[1], 2) +
+               pow(robot_color_targets[j].coords[2] -
+                   ball_depth_targets[i].coords[2], 2)) <
+          ball_depth_targets[i].coords[2]) {
+        robot_color_targets[j].is_real = false;
+      }
+    }
+  }
+
+  /* Add converted targets to array */
+  for (int i = 0; i < ball_depth_targets.size(); i++) {
+    if (ball_depth_targets[i].is_real) {
+      r_targets.push_back(ball_depth_targets[i]);
+    }
+  }
+  for (int i = 0; i < robot_color_targets.size(); i++) {
+    if (robot_color_targets[i].is_real) {
+      r_targets.push_back(robot_color_targets[i]);
+    }
+  }
+}
+
+void findPossibleBallsColor(cv::Mat frame, std::vector<Target> &r_targets, std::string color, int pix_per_ft)
 {
   /* modified frame for mask */
   cv::Mat mask;
@@ -115,17 +197,17 @@ void findPossibleBallsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std
   /* add circles to targets as balls */
   for (int i = 0; i < circles.size(); i++) {
     Target tmp_target;
-    tmp_target.type =  "ball";
+    tmp_target.type = "ball";
     tmp_target.color = color;
-    tmp_target.coords[0] = (circles[i][0] - (frame.size().width / 2)) / (distance * (frame.size().width / frame.size().height));
-    tmp_target.coords[1] = (frame.size().height - circles[i][1]) / distance;
+    tmp_target.coords[0] = circles[i][0];
+    tmp_target.coords[1] =  circles[i][1];
     /* can't determine z coordinate from above, so set to zero */
     tmp_target.coords[2] = 0;
     r_targets.push_back(tmp_target);
   }
 }
 
-void findPossibleRobotsInFrame(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft)
+void findPossibleRobotsColor(cv::Mat frame, std::vector<Target> &r_targets, std::string color, int pix_per_ft, std::vector<std::vector<cv::Point>> &r_contours)
 {
   /* modified frame for mask */
   cv::Mat mask;
@@ -154,7 +236,8 @@ void findPossibleRobotsInFrame(cv::Mat frame, std::vector<Target> &r_targets, st
 
   /* vector to hold detected robots */
   std::vector<cv::Vec2f> robots;
-  /* vector of vectors to hold contours (robot candidates) */
+
+  /* vector of vectors to hold robot candidates */
   std::vector<std::vector<cv::Point>> contours;
 
   /* detect robots*/
@@ -164,19 +247,70 @@ void findPossibleRobotsInFrame(cv::Mat frame, std::vector<Target> &r_targets, st
       cv::Rect br = cv::boundingRect(contours[i]);
       cv::Vec2f center = cv::Vec2f(br.x + br.width / 2, br.y + br.height / 2);
       robots.push_back(center);
+      r_contours.push_back(contours[i]);
     }
   }
 
   /* add robots to targets */
   for (int i = 0; i < robots.size(); i++) {
     Target tmp_target;
-    tmp_target.type =  "robot";
+    tmp_target.type = "robot";
     tmp_target.color = color;
-    tmp_target.coords[0] = (robots[i][0] - (frame.size().width / 2)) / (distance * (frame.size().width / frame.size().height));
-    tmp_target.coords[1] = (frame.size().height - robots[i][1]) / distance;
+    tmp_target.coords[0] = robots[i][0];
+    tmp_target.coords[1] = robots[i][1];
     /* can't determine z coordinate from above, so set to zero */
     tmp_target.coords[2] = 0;
     r_targets.push_back(tmp_target);
+  }
+}
+
+void convertPossibleTargetsWarp(std::vector<Target> &r_targets, cv::Mat frame, double distance)
+{
+  for (int i = 0; i < r_targets.size(); i++) {
+    r_targets[i].coords[0] = (r_targets[i].coords[0] - (frame.size().width / 2)) / (distance * (frame.size().width / frame.size().height));
+    r_targets[i].coords[1] = (frame.size().height - r_targets[i].coords[1]) / distance;
+  }
+}
+
+void findPossibleBallsDepth(cv::Mat depth, std::vector<Target> &r_targets, std::string color)
+{
+  /* convert depth map from 16 bit to 8 bit so that we can analyze it */
+  cv::Mat depth_8;
+  depth.convertTo(depth_8, CV_8U, 1 / 256);
+
+  /* vector to hold detected circles */
+  std::vector<cv::Vec3f> circles;
+
+  /* detect circles */
+  cv::HoughCircles(depth_8, circles, CV_HOUGH_GRADIENT, 4, 500, 500, 100, 25, 1000);
+
+  for (int i = 0; i < circles.size(); i++) {
+    Target tmp_target;
+    tmp_target.type = "ball";
+    tmp_target.color = color;
+    /* For depth only, we use (x, y, r) instead of (x, y, z) */
+    tmp_target.coords[0] = circles[i][0];
+    tmp_target.coords[1] = circles[i][1];
+    tmp_target.coords[2] = circles[i][2];
+    r_targets.push_back(tmp_target);
+  }
+}
+
+void convertPossibleTargetsDepth(std::vector<Target> &r_targets, cv::Mat depth)
+{
+  for (int i = 0; i < r_targets.size(); i++) {
+    double tmp_coords[3];
+    tmp_coords[0] = r_targets[i].coords[0];
+    tmp_coords[1] = r_targets[i].coords[1];
+    tmp_coords[2] = r_targets[i].coords[2];
+
+    r_targets[i].coords[1] = depth.at<uchar>(tmp_coords[0],tmp_coords[1]) / 305.0;
+
+    int distance_x = 2 * r_targets[i].coords[1] * tan(57 / 2);
+    r_targets[i].coords[0] = (tmp_coords[0] - (depth.size().width / 2)) / distance_x;
+
+    int distance_y = 2 * r_targets[i].coords[1] * tan(43 / 2);
+    r_targets[i].coords[2] = (tmp_coords[1] - (depth.size().width / 2)) / distance_y;
   }
 }
 
