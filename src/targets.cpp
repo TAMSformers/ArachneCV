@@ -15,45 +15,49 @@
 
 namespace acv{
 
-std::vector<Target> Targets::get()
+std::vector<Target> mergeTargets(std::vector<Target> targets_1,
+                                   std::vector<Target> targets_2)
 {
-  return m_targets;
-}
-
-void Targets::merge(std::vector<Target> input_targets)
-{
-  /* Make copy that we can change without side effects */
-  std::vector<Target> merge_targets(input_targets);
-
   /* Mark duplicates */
-  for (int i = 0; i < merge_targets.size(); i++) {
-    for (int j = 0; j < m_targets.size(); j++) {
-      if (sqrt(pow(merge_targets[i].coords[0] - m_targets[j].coords[0], 2) +
-               pow(merge_targets[i].coords[1] - m_targets[j].coords[1], 2)) < 3) {
-        merge_targets[i].is_real = false;
+  for (int i = 0; i < targets_1.size(); i++) {
+    for (int j = 0; j < targets_2.size(); j++) {
+      if (sqrt(pow(targets_1[i].coords[0] - targets_2[j].coords[0], 2) +
+               pow(targets_1[i].coords[1] - targets_2[j].coords[1], 2)) < 3) {
+        targets_2[i].is_real = false;
+        /* average the coordinates of the two duplicates */
+        targets_1[i].coords[0] = (targets_1[i].coords[0] + targets_2[j].coords[0]) / 2;
+        targets_1[i].coords[1] = (targets_1[i].coords[1] + targets_2[j].coords[1]) / 2;
+        if (targets_1[i].coords[2] != 0 && targets_2[j].coords[2] != 0) {
+          targets_1[i].coords[2] = (targets_1[i].coords[2] + targets_2[j].coords[2]) / 2;
+        } else {
+          targets_1[i].coords[2] = targets_1[i].coords[2] + targets_2[j].coords[2];
+        }
       }
     }
   }
 
-  /* Add all unmarked merge_targets */
-  for (int i = 0; i < merge_targets.size(); i++) {
-    if (merge_targets[i].is_real) {
-      m_targets.push_back(merge_targets[i]);
+  /* Union of two inputs */
+  std::vector<Target> targets_return;
+
+  /* Add all unmarked targets */
+  for (int i = 0; i < targets_1.size(); i++) {
+    if (targets_1[i].is_real) {
+      targets_return.push_back(targets_1[i]);
+    }
+  }
+  for (int i = 0; i < targets_2.size(); i++) {
+    if (targets_2[i].is_real) {
+      targets_return.push_back(targets_2[i]);
     }
   }
 
   /* Debug information */
-  for (int i = 0; i < m_targets.size(); i++) {
-    std::cout << m_targets[i].type << " " << m_targets[i].color << " " << m_targets[i].coords[0] << " " << m_targets[i].coords[1] << std::endl;
-  }
-  std::cout << std::endl;
-}
+//  for (int i = 0; i < targets_2.size(); i++) {
+//    std::cout << targets_2[i].type << " " << targets_2[i].color << " " << targets_2[i].coords[0] << " " << targets_2[i].coords[1] << std::endl;
+//  }
+//  std::cout << std::endl;
 
-void Targets::clear()
-{
-  while (m_targets.size()) {
-    m_targets.pop_back();
-  }
+  return targets_return;
 }
 
 }

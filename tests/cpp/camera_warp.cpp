@@ -15,7 +15,10 @@ int main()
 {
   double cam_coords[3] = {1, 1, 1};
   acv::WarpCamera camera0(0, cam_coords, 45, 90, 50);
-  acv::Targets targets;
+
+  std::vector<acv::Target> targets;
+  std::vector<acv::Target> empty;
+
   while (true)
   {
     camera0.getFrame();
@@ -23,8 +26,7 @@ int main()
     camera0.findTargets();
     camera0.showFrame();
 
-    targets.merge(camera0.getTargets());
-    targets.clear();
+    targets = acv::mergeTargets(camera0.getTargets(), empty);
   }
   return 0;
 }

@@ -45,37 +45,13 @@ typedef struct
 } Target;
 
 /**
- * A collection of targets.
+ * Return union of two input sets, with duplicates and near duplicates removed.
+ *
+ * @param[in] targets_1 First set of targets to be merged.
+ * @param[in] targets_2 Second set of targets to be merged.
  */
-class Targets
-{
-  private:
-
-    /**
-     * Vector of targets. Usually holds targets from several different
-     * cameras.
-     */
-    std::vector<Target> m_targets;
-
-  public:
-
-    /**
-     * Retrieve targets stored internally by merge().
-     */
-    std::vector<acv::Target> get();
-
-    /**
-     * Add targets to internal collection.
-     *
-     * @param[in] input_targets Targets to be added.
-     */
-    void merge(std::vector<Target> input_targets);
-
-    /**
-     * Clear targets stored internally by merge().
-     */
-    void clear();
-};
+std::vector<Target> mergeTargets(std::vector<Target> targets_1,
+                          std::vector<Target> targets_2);
 
 }
 

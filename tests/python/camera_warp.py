@@ -11,7 +11,6 @@
 import ArachneCV as acv
 
 camera = acv.WarpCamera(0, [1, 1, 1], 45, 90, 30)
-targets = acv.Targets()
 
 while (True):
     camera.getFrame()
@@ -19,5 +18,4 @@ while (True):
     camera.findTargets()
     camera.showFrame()
 
-    targets.merge(camera.getTargets())
-    targets.clear()
+    print acv.mergeTargets(camera.getTargets(), [])

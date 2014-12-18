@@ -16,7 +16,6 @@ if len(sys.argv) != 2:
     quit()
 
 camera = acv.WarpCamera(0, [0, 0, 4], 45, 90, 30)
-targets = acv.Targets()
 
 while (True):
     camera.getFrameFromImage(sys.argv[1])
@@ -24,5 +23,4 @@ while (True):
     camera.findTargets()
     camera.showFrame()
 
-    targets.merge(camera.getTargets())
-    targets.clear()
+    print acv.mergeTargets(camera.getTargets(), [])
