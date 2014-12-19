@@ -14,7 +14,7 @@
 int main()
 {
   double cam_coords[3] = {1, 1, 1};
-  acv::WarpCamera camera0(0, cam_coords, 45, 90, 50);
+  acv::WarpCamera camera0(0, cam_coords, 45, 90, 54, 38);
 
   std::vector<acv::Target> targets;
   std::vector<acv::Target> empty;

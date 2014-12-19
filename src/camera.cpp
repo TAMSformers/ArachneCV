@@ -22,7 +22,7 @@
 namespace acv {
 
 /* Helper functions */
-void reorientTargets(std::vector<Target> &r_targets, double coords[3], int orientation);
+void reorientTargets(std::vector<Target> &r_targets, double coords[3], int rotation);
 void clearTargets(std::vector<Target> &r_targets);
 
 /****************************************************************************
@@ -59,7 +59,7 @@ std::vector<Target> Camera::getTargets()
  *
  ****************************************************************************/
 
-WarpCamera::WarpCamera(int cam_num, double coords[3], int declination, int orientation, int pix_per_ft)
+WarpCamera::WarpCamera(int cam_num, double coords[3], int declination, int rotation, int hfov, int vfov)
 {
   assert(0 < declination < 90);
 
@@ -68,9 +68,10 @@ WarpCamera::WarpCamera(int cam_num, double coords[3], int declination, int orien
   m_coords[1] = coords[1];
   m_coords[2] = coords[2];
   m_declination = declination;
-  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
-  m_pix_per_ft = pix_per_ft;
-  m_orientation = orientation;
+  m_effective_height = coords[2] * tan((90 - declination) * 3.1415 / 180);
+  m_hfov = hfov;
+  m_vfov = vfov;
+  m_rotation = rotation;
 
   /* initialize capture */
   m_capture = cam_num;
@@ -78,7 +79,7 @@ WarpCamera::WarpCamera(int cam_num, double coords[3], int declination, int orien
     exit(1);
 }
 
-WarpCamera::WarpCamera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft)
+WarpCamera::WarpCamera(std::string input_file, double coords[3], int declination, int rotation, int hfov, int vfov)
 {
   assert(0 < declination < 90);
 
@@ -87,9 +88,10 @@ WarpCamera::WarpCamera(std::string input_file, double coords[3], int declination
   m_coords[1] = coords[1];
   m_coords[2] = coords[2];
   m_declination = declination;
-  m_distance = coords[2] * tan((90 - declination) * 3.1415 / 180) * pix_per_ft;
-  m_pix_per_ft = pix_per_ft;
-  m_orientation = orientation;
+  m_effective_height = coords[2] * tan((90 - declination) * 3.1415 / 180);
+  m_hfov = hfov;
+  m_vfov = vfov;
+  m_rotation = rotation;
 
   /* initialize capture */
   m_capture = input_file;
@@ -150,10 +152,10 @@ void WarpCamera::findTargets()
 
   for (int i = 0; i < 2; i++) {
     std::vector<Target> merge_targets;
-    findTargetsWarp(m_frame, merge_targets, colors[i], m_distance, m_pix_per_ft);
+    findTargetsWarp(m_frame, merge_targets, colors[i], m_effective_height, m_hfov, m_vfov);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
-    reorientTargets(merge_targets, m_coords, m_orientation);
+    reorientTargets(merge_targets, m_coords, m_rotation);
 
     /* Add converted targets to array */
     for (int i = 0; i < merge_targets.size(); i++) {
@@ -169,13 +171,15 @@ void WarpCamera::findTargets()
  *
  ****************************************************************************/
 
-DepthCamera::DepthCamera(int cam_num, double coords[3], int orientation)
+DepthCamera::DepthCamera(int cam_num, double coords[3], int rotation, int hfov, int vfov)
 {
   m_cam_num = cam_num;
   m_coords[0] = coords[0];
   m_coords[1] = coords[1];
   m_coords[2] = coords[2];
-  m_orientation = orientation;
+  m_hfov = hfov;
+  m_vfov = vfov;
+  m_rotation = rotation;
 
   /* initialize capture */
   m_capture = cam_num;
@@ -183,13 +187,15 @@ DepthCamera::DepthCamera(int cam_num, double coords[3], int orientation)
     exit(1);
 }
 
-DepthCamera::DepthCamera(std::string input_file, double coords[3], int orientation)
+DepthCamera::DepthCamera(std::string input_file, double coords[3], int rotation, int hfov, int vfov)
 {
   m_cam_num = -1;
   m_coords[0] = coords[0];
   m_coords[1] = coords[1];
   m_coords[2] = coords[2];
-  m_orientation = orientation;
+  m_hfov = hfov;
+  m_vfov = vfov;
+  m_rotation = rotation;
 
   /* initialize capture */
   m_capture = input_file;
@@ -213,10 +219,10 @@ void DepthCamera::findTargets()
 
   for (int i = 0; i < 2; i++) {
     std::vector<Target> merge_targets;
-    findTargetsDepth(m_frame, m_frame_depth, merge_targets, colors[i]);
+    findTargetsDepth(m_frame, m_frame_depth, merge_targets, colors[i], m_hfov, m_vfov);
 
     /* Convert merge_targets coordinates (which are with respect to the camera) to be with respect to the robot. */
-    reorientTargets(merge_targets, m_coords, m_orientation);
+    reorientTargets(merge_targets, m_coords, m_rotation);
 
     /* Add converted targets to array */
     for (int i = 0; i < merge_targets.size(); i++) {
@@ -232,7 +238,7 @@ void DepthCamera::findTargets()
  *
  ****************************************************************************/
 
-void reorientTargets(std::vector<Target> &r_targets, double coords[3], int orientation)
+void reorientTargets(std::vector<Target> &r_targets, double coords[3], int rotation)
 {
   Target tmp_target;
 
@@ -241,11 +247,11 @@ void reorientTargets(std::vector<Target> &r_targets, double coords[3], int orien
 //      printf("%f %f %f\n", (float)r_targets[i].coords[0],
 //            (float)r_targets[i].coords[1], (float)r_targets[i].coords[2]);
     tmp_target.coords[0] =
-               cos(orientation * 3.141592 / 180) * r_targets[i].coords[0] -
-               sin(orientation * 3.141592 / 180) * r_targets[i].coords[1];
+               cos(rotation * 3.141592 / 180) * r_targets[i].coords[0] -
+               sin(rotation * 3.141592 / 180) * r_targets[i].coords[1];
     tmp_target.coords[1] =
-               sin(orientation * 3.141592 / 180) * r_targets[i].coords[0] +
-               cos(orientation * 3.141592 / 180) * r_targets[i].coords[1];
+               sin(rotation * 3.141592 / 180) * r_targets[i].coords[0] +
+               cos(rotation * 3.141592 / 180) * r_targets[i].coords[1];
     r_targets[i].coords[0] = tmp_target.coords[0];
     r_targets[i].coords[1] = tmp_target.coords[1];
 //        printf("%f %f %f\n", (float)r_targets[i].coords[0],

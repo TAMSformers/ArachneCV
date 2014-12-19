@@ -15,7 +15,7 @@ if len(sys.argv) != 2:
     print "Usage: image_warp.py [input file]"
     quit()
 
-camera = acv.WarpCamera(0, [0, 0, 4], 45, 90, 30)
+camera = acv.WarpCamera(0, [0, 0, 5], 45, 90, 54, 38)
 
 while (True):
     camera.getFrameFromImage(sys.argv[1])

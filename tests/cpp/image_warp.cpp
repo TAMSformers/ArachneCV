@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     return 0;
   }
 
-  double cam_coords[3] = {0, 0, 1};
-  acv::WarpCamera camera(0, cam_coords, 45, 90, 50);
+  double cam_coords[3] = {0, 0, 5};
+  acv::WarpCamera camera(0, cam_coords, 45, 90, 54, 38);
 
   std::vector<acv::Target> targets;
   std::vector<acv::Target> empty;

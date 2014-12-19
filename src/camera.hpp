@@ -47,7 +47,7 @@ class Camera
      * The horizontal direction the Camera faces, measured counter-clockwise
      * from the front in degrees.
      */
-    int m_orientation;
+    int m_rotation;
 
     /**
      * Vector of all targets (balls, robots, etc.) found in current frame.
@@ -95,15 +95,19 @@ class WarpCamera : public Camera
     int m_declination; 
 
     /**
-     * Number of pixels equal to a square foot at camera's height. Dependent
-     * on resolution.
+     * Horizontal field of view in degrees.
      */
-    int m_pix_per_ft;
+    int m_hfov;
 
     /**
-     * Distance from the camera of the farthest point seen in images.
+     * Vertical field of view in degrees.
      */
-    double m_distance;
+    int m_vfov;
+
+    /**
+     * Effective height of the camera view when warped.
+     */
+    double m_effective_height;
 
   public:
 
@@ -112,10 +116,11 @@ class WarpCamera : public Camera
      * @param[in] cam_num     Camera device number.
      * @param[in] coords      3D location relative to the robot's center.
      * @param[in] declination Angle downward in degrees.
-     * @param[in] orientation Horizontal angle counterclockwise from the front in degrees.
-     * @param[in] pix_per_ft  Number of pixels equal to a square foot at camera's height. Dependent on resolution.
+     * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
+     * @param[in] hfov        Horizontal field of view in degrees.
+     * @param[in] vfov        Vertical field of view in degrees.
      */
-    WarpCamera(int cam_num, double coords[3], int declination, int orientation, int pix_per_ft);
+    WarpCamera(int cam_num, double coords[3], int declination, int rotation, int hfov, int vfov);
 
     /**
      * Constructor for use with a video file.
@@ -123,10 +128,11 @@ class WarpCamera : public Camera
      * @param[in] input_file  Video file path. Relative or absolute.
      * @param[in] coords      3D location relative to the robot's center.
      * @param[in] declination Angle downward in degrees.
-     * @param[in] orientation Horizontal angle counterclockwise from the front in degrees.
-     * @param[in] pix_per_ft  Number of pixels equal to a square foot at camera's height. Dependent on resolution.
+     * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
+     * @param[in] hfov        Horizontal field of view in degrees.
+     * @param[in] vfov        Vertical field of view in degrees.
      */
-    WarpCamera(std::string input_file, double coords[3], int declination, int orientation, int pix_per_ft);
+    WarpCamera(std::string input_file, double coords[3], int declination, int rotation, int hfov, int vfov);
 
     /**
      * Retrieve next frame from an image, ignoring the stream. Useful for
@@ -160,24 +166,38 @@ class DepthCamera : public Camera
      */
      cv::Mat m_frame_depth;
 
+    /**
+     * Horizontal field of view in degrees.
+     */
+    int m_hfov;
+
+    /**
+     * Vertical field of view in degrees.
+     */
+    int m_vfov;
+
   public:
 
     /**
      * Constructor for use with a video camera.
      * @param[in] cam_num     Camera device number.
      * @param[in] coords      3D location relative to the robot's center.
-     * @param[in] orientation Horizontal angle counterclockwise from the front in degrees.
+     * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
+     * @param[in] hfov        Horizontal field of view in degrees.
+     * @param[in] vfov        Vertical field of view in degrees.
      */
-    DepthCamera(int cam_num, double coords[3], int orientation);
+    DepthCamera(int cam_num, double coords[3], int rotation, int hfov, int vfov);
 
     /**
      * Constructor for use with a video file.
      *
      * @param[in] input_file  Video file path. Relative or absolute.
      * @param[in] coords      3D location relative to the robot's center.
-     * @param[in] orientation Horizontal angle counterclockwise from the front in degrees.
+     * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
+     * @param[in] hfov        Horizontal field of view in degrees.
+     * @param[in] vfov        Vertical field of view in degrees.
      */
-    DepthCamera(std::string input_file, double coords[3], int orientation);
+    DepthCamera(std::string input_file, double coords[3], int rotation, int hfov, int vfov);
 
     /**
      * Retrieve next frame from stream.

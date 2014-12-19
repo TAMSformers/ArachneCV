@@ -10,7 +10,7 @@
 
 import ArachneCV as acv
 
-camera = acv.WarpCamera(0, [1, 1, 1], 45, 90, 30)
+camera = acv.WarpCamera(0, [1, 1, 1], 45, 90, 54, 38)
 
 while (True):
     camera.getFrame()

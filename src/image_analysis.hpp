@@ -18,8 +18,8 @@
 
 namespace acv {
 
-void findTargetsWarp(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double distance, int pix_per_ft);
-void findTargetsDepth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets, std::string color);
+void findTargetsWarp(cv::Mat frame, std::vector<Target> &r_targets, std::string color, double effective_height, int hfov, int vfov);
+void findTargetsDepth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets, std::string color, int hfov, int vfov);
 
 }
 
