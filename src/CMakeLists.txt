@@ -38,8 +38,6 @@ endif(OUTPUT_NATIVE)
 
 if(OUTPUT_PYTHON)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
