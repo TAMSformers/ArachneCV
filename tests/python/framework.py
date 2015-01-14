@@ -21,6 +21,9 @@ while (True):
     camera0.getFrame()
     camera1.getFrame()
 
+    camera0.cvtAndBlur()
+    camera1.cvtAndBlur()
+
     camera0.warpPerspective()
     camera1.warpPerspective()
 

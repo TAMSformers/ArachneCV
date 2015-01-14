@@ -72,17 +72,9 @@ using acv::Target;
       PyErr_SetString(PyExc_ValueError,"type is not a string");
       return NULL;
     }
-    std::string color;
-    PyObject *py_color = PySequence_GetItem(PySequence_GetItem($input,i),1);
-    if (PyString_Check(py_color)) {
-      color = PyString_AsString(py_color);
-    } else {
-      PyErr_SetString(PyExc_ValueError,"color is not a string");
-      return NULL;
-    }
     double coords[3];
     for (int j = 0; j < 3; j++) {
-      PyObject *o = PySequence_GetItem(PySequence_GetItem(PySequence_GetItem($input,i),2),j);
+      PyObject *o = PySequence_GetItem(PySequence_GetItem(PySequence_GetItem($input,i),1),j);
       if (PyNumber_Check(o)) {
         coords[j] = (double) PyFloat_AsDouble(o);
       } else {
@@ -90,13 +82,29 @@ using acv::Target;
         return NULL;
       }
     }
+    double angle;
+    PyObject *py_angle = PySequence_GetItem(PySequence_GetItem($input,i),2);
+    if (PyNumber_Check(py_angle)) {
+      angle = PyFloat_AsDouble(py_angle);
+    } else {
+      PyErr_SetString(PyExc_ValueError,"angle is not a number");
+      return NULL;
+    }
+    std::string orientation;
+    PyObject *py_orientation = PySequence_GetItem(PySequence_GetItem($input,i),3);
+    if (PyString_Check(py_orientation)) {
+      orientation = PyString_AsString(py_orientation);
+    } else {
+      PyErr_SetString(PyExc_ValueError,"orientation is not a string");
+      return NULL;
+    }
     acv::Target tmp_target;
     tmp_targets[i].type = type;
-    tmp_targets[i].color = color;
     tmp_targets[i].coords[0] = coords[0];
     tmp_targets[i].coords[1] = coords[1];
     tmp_targets[i].coords[2] = coords[2];
-    tmp_targets[i].is_real = true;
+    tmp_targets[i].angle = angle;
+    tmp_targets[i].orientation = orientation;
   }
   $1 = tmp_targets;
 }
@@ -110,13 +118,13 @@ using acv::Target;
   for (int i = 0; i < $1.size(); i++) {
     PyObject *py_target = PyList_New(4);
     PyList_SetItem(py_target,0,PyString_FromString((&$1)[0][i].type.c_str()));
-    PyList_SetItem(py_target,1,PyString_FromString((&$1)[0][i].color.c_str()));
-    PyList_SetItem(py_target,2,PyList_New(3));
+    PyList_SetItem(py_target,1,PyList_New(3));
     for (int j = 0; j < 3; j++) {
       PyObject *o = PyFloat_FromDouble((double)((&$1)[0][i].coords[j]));
-      PyList_SetItem(PySequence_GetItem(py_target,2),j,o);
+      PyList_SetItem(PySequence_GetItem(py_target,1),j,o);
     }
-    PyList_SetItem(py_target,3,PyList_New(0));
+    PyList_SetItem(py_target,2,PyFloat_FromDouble((&$1)[0][i].angle));
+    PyList_SetItem(py_target,3,PyString_FromString((&$1)[0][i].orientation.c_str()));
     PyList_Append($result,py_target);
   }
 }

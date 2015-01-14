@@ -144,18 +144,6 @@ class WarpCamera : public Camera
     WarpCamera(int cam_num, double coords[3], int declination, int rotation, int hfov, int vfov);
 
     /**
-     * Constructor for use with a video file.
-     *
-     * @param[in] input_file  Video file path. Relative or absolute.
-     * @param[in] coords      3D location relative to the robot's center.
-     * @param[in] declination Angle downward in degrees.
-     * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
-     * @param[in] hfov        Horizontal field of view in degrees.
-     * @param[in] vfov        Vertical field of view in degrees.
-     */
-    WarpCamera(std::string input_file, double coords[3], int declination, int rotation, int hfov, int vfov);
-
-    /**
      * Retrieve next frame from an image, ignoring the stream. Useful for
      * debugging.
      *
@@ -199,17 +187,6 @@ class DepthCamera : public Camera
      * @param[in] vfov        Vertical field of view in degrees.
      */
     DepthCamera(int cam_num, double coords[3], int declination, int rotation, int hfov, int vfov);
-
-    /**
-     * Constructor for use with a video file.
-     *
-     * @param[in] input_file  Video file path. Relative or absolute.
-     * @param[in] coords      3D location relative to the robot's center.
-     * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
-     * @param[in] hfov        Horizontal field of view in degrees.
-     * @param[in] vfov        Vertical field of view in degrees.
-     */
-    DepthCamera(std::string input_file, double coords[3], int rotation, int hfov, int vfov);
 
     /**
      * Retrieve next frame from stream.

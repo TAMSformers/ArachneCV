@@ -22,6 +22,7 @@ int main()
   while (true)
   {
     camera0.getFrame();
+    camera0.cvtAndBlur();
     camera0.warpPerspective();
     camera0.findTargets();
     camera0.showFrame();
