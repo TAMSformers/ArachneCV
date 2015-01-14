@@ -12,27 +12,34 @@ option(OUTPUT_NATIVE "Compile for use by C++ programs." ON)
 #option(OUTPUT_CSHARP "Compile for use by C# programs." ON)
 #option(OUTPUT_JAVA "Compile for use by Java programs." ON)
 #option(OUTPUT_PERL "Compile for use by Perl programs." ON)
-option(OUTPUT_PYTHON "Compile for use by Python programs." ON)
+option(OUTPUT_PYTHON "Compile for use by Python programs.")
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_BINARY_DIR}/src")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -O2 -std=c++11")
 
 if(OUTPUT_NATIVE)
 
 add_library(ArachneCV
   ArachneCV.hpp
   camera.hpp camera.cpp
-  image_analysis.hpp image_analysis.cpp
   targets.hpp targets.cpp
+  analysis/analysis_helper.hpp
+  analysis/analysis_helper.cpp
+  analysis/analysis.hpp
+  analysis/bins.cpp
+  analysis/noodles.cpp
+  analysis/scoring_zones.cpp
+  #analysis/totes.cpp
 )
 
 find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
 
 install(TARGETS ArachneCV DESTINATION lib)
-install(FILES ArachneCV.hpp camera.hpp image_analysis.hpp targets.hpp DESTINATION "include/ArachneCV")
+install(FILES ArachneCV.hpp camera.hpp targets.hpp DESTINATION "include/ArachneCV")
+install(FILES analysis/analysis.hpp DESTINATION "include/ArachneCV/analysis")
 
 endif(OUTPUT_NATIVE)
 
@@ -64,8 +71,12 @@ add_custom_target(patch
 set_source_files_properties(ArachneCV.i PROPERTIES CPLUSPLUS ON)
 swig_add_module(ArachneCV python ArachneCV.i
   camera.cpp
-  image_analysis.cpp
   targets.cpp
+  analysis/analysis_helper.cpp
+  analysis/bins.cpp
+  analysis/noodles.cpp
+  analysis/scoring_zones.cpp
+  #analysis/totes.cpp
 )
 swig_link_libraries(ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES})
 

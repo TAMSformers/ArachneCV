@@ -17,8 +17,9 @@
 #include <string>
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/gpu/gpu.hpp>
 
-#include "image_analysis.hpp"
+#include "analysis/analysis.hpp"
 #include "targets.hpp"
 
 namespace acv {
@@ -50,46 +51,6 @@ class Camera
     int m_rotation;
 
     /**
-     * Vector of all targets (balls, robots, etc.) found in current frame.
-     */
-    std::vector<Target> m_targets;
-
-    /**
-     * Video stream from camera or file.
-     */
-    cv::VideoCapture m_capture;
-
-    /**
-     * Current frame from video stream.
-     */
-    cv::Mat m_frame;
-
-  public:
-
-    /**
-     * Retrieve next frame from stream.
-     */
-    void getFrame();
-
-    /**
-     * Creates a window if not opened and shows the current frame.
-     */
-    void showFrame();
-
-    /**
-     * Retrieve targets stored internally by findTargets().
-     */
-    std::vector<Target> getTargets();
-};
-
-/**
- * Downward facing single-channel camera.
- */
-class WarpCamera : public Camera
-{
-  protected:
-
-    /**
      * Angle of declination. Used to determine how far to warp.
      */
     int m_declination; 
@@ -108,6 +69,66 @@ class WarpCamera : public Camera
      * Effective height of the camera view when warped.
      */
     double m_effective_height;
+
+    /**
+     * Vector of all targets (balls, robots, etc.) found in current frame.
+     */
+    std::vector<Target> m_targets;
+
+    /**
+     * Video stream from camera or file.
+     */
+    cv::VideoCapture m_capture;
+
+    /**
+     * Current unaltered frame from video stream.
+     */
+    cv::Mat m_frame;
+
+    /**
+     * Current blurred frame from video stream.
+     */
+    cv::Mat m_frame_blur;
+
+    /**
+     * Current blurred and warped frame from video stream.
+     */
+    cv::Mat m_warp_blur;
+
+  public:
+
+    /**
+     * Retrieve next frame from stream.
+     */
+    void getFrame();
+
+    /**
+     * Creates a window if not opened and shows the current frame.
+     */
+    void showFrame();
+
+    /**
+     * Preprocess current frame;
+     */
+    void cvtAndBlur();
+
+    /**
+     * Warp current frame to generate overhead view.
+     */
+    void warpPerspective();
+
+    /**
+     * Retrieve targets stored internally by findTargets().
+     */
+    std::vector<Target> getTargets();
+};
+
+/**
+ * Downward facing single-channel camera.
+ */
+class WarpCamera : public Camera
+{
+  protected:
 
   public:
 
@@ -143,11 +164,6 @@ class WarpCamera : public Camera
     void getFrameFromImage(std::string image);
 
     /**
-     * Warp current frame to generate overhead view.
-     */
-    void warpPerspective();
-
-    /**
      * Process current frame to locate targets (balls, robots, etc.).
      * Stores results internally.
      */
@@ -162,19 +178,14 @@ class DepthCamera : public Camera
   protected:
 
     /**
-     * Holds depth data for current frame.
+     * Current depth sensor frame from video stream.
      */
-     cv::Mat m_frame_depth;
+    cv::Mat m_depth;
 
     /**
-     * Horizontal field of view in degrees.
+     * Correction for depth map due to camera declination.
      */
-    int m_hfov;
-
-    /**
-     * Vertical field of view in degrees.
-     */
-    int m_vfov;
+    double m_depth_correction;
 
   public:
 
@@ -182,11 +193,12 @@ class DepthCamera : public Camera
      * Constructor for use with a video camera.
      * @param[in] cam_num     Camera device number.
      * @param[in] coords      3D location relative to the robot's center.
+     * @param[in] declination Angle downward in degrees.
      * @param[in] rotation Horizontal angle counterclockwise from the front in degrees.
      * @param[in] hfov        Horizontal field of view in degrees.
      * @param[in] vfov        Vertical field of view in degrees.
      */
-    DepthCamera(int cam_num, double coords[3], int rotation, int hfov, int vfov);
+    DepthCamera(int cam_num, double coords[3], int declination, int rotation, int hfov, int vfov);
 
     /**
      * Constructor for use with a video file.

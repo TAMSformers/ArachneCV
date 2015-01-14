@@ -15,7 +15,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "camera.hpp"
-#include "image_analysis.hpp"
 #include "targets.hpp"
+#include "analysis/analysis.hpp"
 
 #endif

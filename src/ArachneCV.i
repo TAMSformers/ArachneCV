@@ -11,7 +11,7 @@
 %{
 #include "camera.hpp"
 #include "targets.hpp"
-#include "image_analysis.hpp"
+#include "analysis/analysis.hpp"
 
 /* SWIG doesn't recognize Target as part of acv, for some reason. */
 using acv::Target;
@@ -126,4 +126,4 @@ using acv::Target;
 
 %include "camera.hpp"
 %include "targets.hpp"
-%include "image_analysis.hpp"
+%include "analysis/analysis.hpp"

@@ -21,9 +21,9 @@ std::vector<Target> mergeTargets(std::vector<Target> targets_1,
   /* Mark duplicates */
   for (int i = 0; i < targets_1.size(); i++) {
     for (int j = 0; j < targets_2.size(); j++) {
-      if (sqrt(pow(targets_1[i].coords[0] - targets_2[j].coords[0], 2) +
-               pow(targets_1[i].coords[1] - targets_2[j].coords[1], 2)) < 3) {
-        targets_2[i].is_real = false;
+      if ((sqrt(pow(targets_1[i].coords[0] - targets_2[j].coords[0], 2) +
+                pow(targets_1[i].coords[1] - targets_2[j].coords[1], 2)) < 3) &&
+          targets_1[i].type == targets_2[j].type) {
         /* average the coordinates of the two duplicates */
         targets_1[i].coords[0] = (targets_1[i].coords[0] + targets_2[j].coords[0]) / 2;
         targets_1[i].coords[1] = (targets_1[i].coords[1] + targets_2[j].coords[1]) / 2;
@@ -41,21 +41,23 @@ std::vector<Target> mergeTargets(std::vector<Target> targets_1,
 
   /* Add all unmarked targets */
   for (int i = 0; i < targets_1.size(); i++) {
-    if (targets_1[i].is_real) {
-      targets_return.push_back(targets_1[i]);
-    }
+    targets_return.push_back(targets_1[i]);
   }
   for (int i = 0; i < targets_2.size(); i++) {
-    if (targets_2[i].is_real) {
-      targets_return.push_back(targets_2[i]);
-    }
+    targets_return.push_back(targets_2[i]);
   }
 
   /* Debug information */
-//  for (int i = 0; i < targets_2.size(); i++) {
-//    std::cout << targets_2[i].type << " " << targets_2[i].color << " " << targets_2[i].coords[0] << " " << targets_2[i].coords[1] << std::endl;
-//  }
-//  std::cout << std::endl;
+/*  for (int i = 0; i < targets_return.size(); i++) {
+    std::cout << targets_return[i].type << " " <<
+                 targets_return[i].coords[0] << " " <<
+                 targets_return[i].coords[1] << " " <<
+                 targets_return[i].coords[2] << " " <<
+                 targets_return[i].angle << " " <<
+                 targets_return[i].orientation <<
+                 std::endl;
+  }*/
+  std::cout << std::endl;
 
   return targets_return;
 }

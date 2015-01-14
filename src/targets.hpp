@@ -19,29 +19,29 @@
 namespace acv {
 
 /**
- * A ball, robot, etc.
+ * Anything we need to track.
  */
 typedef struct
 {
   /**
-   * Identity of target. Usually either robot or ball.
+   * Identity of target.
    */
   std::string type;
 
   /**
-   * Either red or blue.
-   */
-  std::string color;
-
-  /**
    * Coordinates in 3D space relative to the center of the robot.
    */
-  double coords[3];
+  cv::Vec3f coords;
 
   /**
-   * Used within image_analysis to mark false positives.
+   * Angle in degrees from horizontal from front of robot.
    */
-  bool is_real = true;
+  double angle;
+
+  /**
+   * Orientation;
+   */
+  std::string orientation;
 } Target;
 
 /**
