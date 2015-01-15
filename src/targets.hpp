@@ -31,7 +31,8 @@ typedef struct
   /**
    * Coordinates in 3D space relative to the center of the robot.
    */
-  cv::Vec3f coords;
+  //cv::Vec3f coords;
+  double coords[3];
 
   /**
    * Angle in degrees from horizontal from front of robot.

@@ -73,7 +73,9 @@ void add_color_fields_as_targets(std::vector<Target> &r_targets, std::vector<cv:
   for (int i = 0; i < coords.size(); i++) {
     Target target;
     target.type = type;
-    target.coords = coords[i];
+    target.coords[0] = coords[i][0];
+    target.coords[1] = coords[i][1];
+    target.coords[2] = coords[i][2];
     if (orientations.size()) {
       target.orientation = orientations[i];
     } else {
@@ -96,108 +98,16 @@ void pix_to_ft_warp(std::vector<Target> &r_targets, cv::Size warp_size, int pix_
   }
 }
 
-void pix_to_ft_depth(std::vector<Target> &r_targets, cv::Mat depth, double depth_correction, int hfov, int vfov)
+void pix_to_ft_depth(std::vector<Target> &r_targets, cv::Mat depth, double depth_correction, int pix_per_ft_x, int pix_per_ft_y)
 {
   for (int i = 0; i < r_targets.size(); i++) {
     double tmp_coords[3];
     tmp_coords[0] = r_targets[i].coords[0];
     tmp_coords[1] = r_targets[i].coords[1];
-    tmp_coords[2] = r_targets[i].coords[2];
 
+    r_targets[i].coords[0] = (r_targets[i].coords[0] - (depth.size().width / 2)) / pix_per_ft_x;
     r_targets[i].coords[1] = (depth.at<uchar>(tmp_coords[0],tmp_coords[1]) / 305.0) * depth_correction;
-
-    int distance_x = 2 * r_targets[i].coords[1] * tan(hfov / 2);
-    r_targets[i].coords[0] = (tmp_coords[0] - (depth.size().width / 2)) / distance_x;
-
-    int distance_y = 2 * r_targets[i].coords[1] * tan(vfov / 2);
-    r_targets[i].coords[2] = (tmp_coords[1] - (depth.size().width / 2)) / distance_y;
   }
-}
-
-void warp_coords(std::vector<Target> &r_targets, cv::Size in_size, cv::Size out_size)
-{
-  /*assert(in_size.height == out_size.height);
-
-   convert r_targets.coords into a 2D representation for the transform 
-  std::vector<cv::Vec2f> coords_2d;
-  for (int i = 0; i < r_targets.size(); i++) {
-    cv::Vec2f coords((r_targets[i].coords[0] - in_size.width / 2) * 1/2 + in_size.width / 2, (r_targets[i].coords[1]) * 2);
-    coords_2d.push_back(coords);
-  }
-
-   point arrays to generate transform matrix 
-  std::vector<cv::Point2f> src_pts(4);
-  std::vector<cv::Point2f> dst_pts(4);
-
-   initialize source array 
-  cv::Point2f S0(0.0, 0.0);
-  cv::Point2f S1((float)in_size.width, 0.0);
-  cv::Point2f S2((float)in_size.width, (float)in_size.height);
-  cv::Point2f S3(0.0, (float)in_size.height);
-  src_pts[0] = S0;
-  src_pts[1] = S1;
-  src_pts[2] = S2;
-  src_pts[3] = S3;
-
-   initialize destination array 
-  cv::Point2f D0(0.0, 0.0);
-  cv::Point2f D1((float)out_size.width, 0.0);
-  cv::Point2f D2((float)out_size.width, (float)out_size.height);
-  cv::Point2f D3(0.0, (float)out_size.height);
-  dst_pts[0] = D0;
-  dst_pts[1] = D1;
-  dst_pts[2] = D2;
-  dst_pts[3] = D3;
-
-   generate transform matrix 
-  cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
-  M.convertTo(M, CV_32F);
-
-  std::cout << src_pts << std::endl;
-  std::cout << dst_pts << std::endl;
-  std::cout << M << std::endl;
-
-   apply transformation 
-  for (int i = 0; i < r_targets.size(); i++) {
-    std::cout << coords_2d[i] << std::endl;
-  }
-  cv::perspectiveTransform(coords_2d, coords_2d, M);
-  for (int i = 0; i < r_targets.size(); i++) {
-    std::cout << coords_2d[i] << std::endl;
-  }
-
-   convert back to 3D 
-  for (int i = 0; i < r_targets.size(); i++) {
-    r_targets[i].coords[0] = coords_2d[i][0];
-    r_targets[i].coords[1] = coords_2d[i][1];
-    std::cout << r_targets[i].coords << std::endl;
-  }*/
-
-
-  /* apply transform matrix */
-  /*for (int i = 0; i < r_targets.size(); i++) {
-    //r_targets[i].coords[1] = r_targets[i].coords[1] * 1.5;
-                             //(out_size.width / in_size.width);
-    int width_diff = (out_size.width - in_size.width / 2) *
-                     ((out_size.height - r_targets[i].coords[1]) /
-                       out_size.height);
-    int off_center = abs(r_targets[i].coords[0] - in_size.width / 2);
-    int in_width = in_size.width / 2 + width_diff;
-    int correction = ((float)off_center / (in_size.width / 2)) * width_diff;
-
-    std::cout << width_diff << " " << off_center << " " << in_width << " " << correction << std::endl;
-
-    if (r_targets[i].coords[0] > in_size.width / 2) {
-      //std::cout << "greater" << std::endl;
-      r_targets[i].coords[0] = out_size.width / 2 + correction;
-    } else if (r_targets[i].coords[0] < in_size.width / 2) {
-      //std::cout << "less" << std::endl;
-      r_targets[i].coords[0] = out_size.width / 2 - correction;
-    }
-
-    //std::cout << r_targets[i].coords[0] << std::endl;
-    //std::cout << r_targets[i].coords[1] << std::endl;
-  }*/
 }
 
 void annotate_frame(std::vector<Target> targets, cv::Mat frame, int bgr_color[3], float pix_per_ft_x, float pix_per_ft_y)

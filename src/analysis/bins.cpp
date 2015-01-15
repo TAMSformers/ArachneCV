@@ -32,7 +32,7 @@ void find_bins(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> &
 
   /* detect color fields */
   std::vector<std::vector<cv::Point>> all_contours;
-  color_fields_in_range(all_contours, frame, lower_bound, upper_bound);
+  color_fields_in_range(all_contours, warp, lower_bound, upper_bound);
 
   /* screen for color fields above size threshold */
   std::vector<std::vector<cv::Point>> contours;
@@ -61,7 +61,7 @@ void find_bins(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> &
     //std::cout << heights[i] << std::endl;
     //std::cout << widths[i] << std::endl;
     /* Algorithm won't work with high declination. */
-    if (heights[i] > (widths[i] * (1.0 + 0.3 * depth_correction))) {
+    if (heights[i] > (widths[i] * (1.0 + 0.3 * depth_correction) / ((float)warp.size().width / frame.size().width))) {
       orientations.push_back("up");
     } else {
       orientations.push_back("down");
@@ -76,15 +76,13 @@ void find_bins(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> &
 
   int debug_color[3] = {0, 0, 255};
 
-  /* TODO This is buggy and will change. */
   /* determine distance to each target*/
   if (!depth.empty()) {
-    // Requires centers to be on frame.
-    pix_to_ft_depth(r_targets, depth, depth_correction, hfov, vfov);
-    annotate_frame(r_targets, frame, debug_color, pix_per_ft_x, pix_per_ft_y);
+    // Requires centers to be on warp.
+    pix_to_ft_depth(r_targets, depth, depth_correction, pix_per_ft_x, pix_per_ft_y);
+    annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
   } else {
-    // Requires centers to be on warp. Warp coords to fix this.
-    //warp_coords(r_targets, frame.size(), warp.size());
+    // Requires centers to be on warp.
     pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
     annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
   }

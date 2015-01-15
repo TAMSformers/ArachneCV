@@ -113,11 +113,6 @@ class Camera
     void cvtAndBlur();
 
     /**
-     * Warp current frame to generate overhead view.
-     */
-    void warpPerspective();
-
-    /**
      * Retrieve targets stored internally by findTargets().
      */
     std::vector<Target> getTargets();
@@ -150,6 +145,11 @@ class WarpCamera : public Camera
      * @param[in] image Image file path. Relative or absolute.
      */
     void getFrameFromImage(std::string image);
+
+    /**
+     * Warp current frame to generate overhead view.
+     */
+    void warpPerspective();
 
     /**
      * Process current frame to locate targets (balls, robots, etc.).
@@ -192,6 +192,11 @@ class DepthCamera : public Camera
      * Retrieve next frame from stream.
      */
     void getFrame();
+
+    /**
+     * Warp current frame to generate overhead view.
+     */
+    void warpPerspective();
 
     /**
      * Process current frame to locate targets (balls, robots, etc.).

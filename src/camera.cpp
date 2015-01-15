@@ -77,45 +77,6 @@ void Camera::cvtAndBlur()
   }
 }
 
-void Camera::warpPerspective()
-{
-  /* get camera size */
-  cv::Size cam_size = m_frame_blur.size();
-
-  /* point arrays to generate transform matrix */
-  std::vector<cv::Point2f> src_pts(4);
-  std::vector<cv::Point2f> dst_pts(4);
-
-  /* initialize source array */
-  cv::Point2f S0(0.0, 0.0);
-  cv::Point2f S1((float)cam_size.width, 0.0);
-  cv::Point2f S2((float)cam_size.width, (float)cam_size.height);
-  cv::Point2f S3(0.0, (float)cam_size.height);
-  src_pts[0] = S0;
-  src_pts[1] = S1;
-  src_pts[2] = S2;
-  src_pts[3] = S3;
-
-  /* find transform from reference angle */
-  float warp_factor = 90.0 / m_declination;
-  cv::Size dsize(cam_size.width * warp_factor, cam_size.height);
-  cv::Point2f D0(0.0, 0.0);
-  cv::Point2f D1((float)dsize.width, 0.0);
-  cv::Point2f D2(((float)dsize.width / 2) + ((float)cam_size.width / 2), (float)dsize.height);
-  cv::Point2f D3(((float)dsize.width / 2) - ((float)cam_size.width / 2), (float)dsize.height);
-  dst_pts[0] = D0;
-  dst_pts[1] = D1;
-  dst_pts[2] = D2;
-  dst_pts[3] = D3;
-
-  /* generate transform matrix */
-  cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
-  M.convertTo(M, CV_32F);
-
-  /* apply transform matrix */
-  cv::warpPerspective(m_frame_blur, m_warp_blur, M, dsize);
-}
-
 /*void annotateFrame()
 {
   int pix_per_ft_x = fov_to_pix_per_ft(m_frame.size().width, m_effective_height, m_hfov, m_vfov);
@@ -183,6 +144,45 @@ void WarpCamera::getFrameFromImage(std::string image)
   m_frame = cv::imread(image, CV_LOAD_IMAGE_COLOR);
 }
 
+void WarpCamera::warpPerspective()
+{
+  /* get camera size */
+  cv::Size cam_size = m_frame_blur.size();
+
+  /* point arrays to generate transform matrix */
+  std::vector<cv::Point2f> src_pts(4);
+  std::vector<cv::Point2f> dst_pts(4);
+
+  /* initialize source array */
+  cv::Point2f S0(0.0, 0.0);
+  cv::Point2f S1((float)cam_size.width, 0.0);
+  cv::Point2f S2((float)cam_size.width, (float)cam_size.height);
+  cv::Point2f S3(0.0, (float)cam_size.height);
+  src_pts[0] = S0;
+  src_pts[1] = S1;
+  src_pts[2] = S2;
+  src_pts[3] = S3;
+
+  /* find transform from reference angle */
+  float warp_factor = 90.0 / m_declination;
+  cv::Size dsize(cam_size.width * warp_factor, cam_size.height);
+  cv::Point2f D0(0.0, 0.0);
+  cv::Point2f D1((float)dsize.width, 0.0);
+  cv::Point2f D2(((float)dsize.width / 2) + ((float)cam_size.width / 2), (float)dsize.height);
+  cv::Point2f D3(((float)dsize.width / 2) - ((float)cam_size.width / 2), (float)dsize.height);
+  dst_pts[0] = D0;
+  dst_pts[1] = D1;
+  dst_pts[2] = D2;
+  dst_pts[3] = D3;
+
+  /* generate transform matrix */
+  cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
+  M.convertTo(M, CV_32F);
+
+  /* apply transform matrix */
+  cv::warpPerspective(m_frame_blur, m_warp_blur, M, dsize);
+}
+
 void WarpCamera::findTargets()
 {
   std::vector<Target> bins;
@@ -193,6 +193,12 @@ void WarpCamera::findTargets()
 
   std::vector<Target> scoring_zones;
   find_scoring_zones(m_frame_blur, m_warp_blur, cv::Mat(), scoring_zones, m_effective_height, 0.0, m_hfov, m_vfov);
+
+  std::vector<Target> yellow_totes;
+  find_yellow_totes(m_frame_blur, m_warp_blur, cv::Mat(), yellow_totes, m_effective_height, 0.0, m_hfov, m_vfov);
+
+  std::vector<Target> gray_totes;
+  find_gray_totes(m_frame_blur, m_warp_blur, cv::Mat(), gray_totes, m_effective_height, 0.0, m_hfov, m_vfov);
 
   /* Debugging */
   /*int bins_color[3] = {0, 0, 255};
@@ -209,6 +215,8 @@ void WarpCamera::findTargets()
   reorient_targets(bins, m_coords, m_rotation);
   reorient_targets(noodles, m_coords, m_rotation);
   reorient_targets(scoring_zones, m_coords, m_rotation);
+  reorient_targets(yellow_totes, m_coords, m_rotation);
+  reorient_targets(gray_totes, m_coords, m_rotation);
 
   /* Add converted targets to array */
   for (int i = 0; i < bins.size(); i++) {
@@ -219,6 +227,12 @@ void WarpCamera::findTargets()
   }
   for (int i = 0; i < scoring_zones.size(); i++) {
     m_targets.push_back(scoring_zones[i]);
+  }
+  for (int i = 0; i < yellow_totes.size(); i++) {
+    m_targets.push_back(yellow_totes[i]);
+  }
+  for (int i = 0; i < gray_totes.size(); i++) {
+    m_targets.push_back(gray_totes[i]);
   }
 }
 
@@ -268,10 +282,18 @@ void DepthCamera::findTargets()
   std::vector<Target> scoring_zones;
   find_scoring_zones(m_frame_blur, m_warp_blur, m_depth, scoring_zones, m_effective_height, m_depth_correction, m_hfov, m_vfov);
 
+  std::vector<Target> yellow_totes;
+  find_yellow_totes(m_frame_blur, m_warp_blur, m_depth, yellow_totes, m_effective_height, m_depth_correction, m_hfov, m_vfov);
+
+  std::vector<Target> gray_totes;
+  find_gray_totes(m_frame_blur, m_warp_blur, m_depth, gray_totes, m_effective_height, m_depth_correction, m_hfov, m_vfov);
+
   /* Convert target coordinates (which are with respect to the camera) to be with respect to the robot. */
   reorient_targets(bins, m_coords, m_rotation);
   reorient_targets(noodles, m_coords, m_rotation);
   reorient_targets(scoring_zones, m_coords, m_rotation);
+  reorient_targets(yellow_totes, m_coords, m_rotation);
+  reorient_targets(gray_totes, m_coords, m_rotation);
 
   /* Add converted targets to array */
   for (int i = 0; i < bins.size(); i++) {
@@ -283,6 +305,52 @@ void DepthCamera::findTargets()
   for (int i = 0; i < scoring_zones.size(); i++) {
     m_targets.push_back(scoring_zones[i]);
   }
+  for (int i = 0; i < yellow_totes.size(); i++) {
+    m_targets.push_back(yellow_totes[i]);
+  }
+  for (int i = 0; i < gray_totes.size(); i++) {
+    m_targets.push_back(gray_totes[i]);
+  }
+}
+
+void DepthCamera::warpPerspective()
+{
+  /* get camera size */
+  cv::Size cam_size = m_frame_blur.size();
+
+  /* point arrays to generate transform matrix */
+  std::vector<cv::Point2f> src_pts(4);
+  std::vector<cv::Point2f> dst_pts(4);
+
+  /* initialize source array */
+  cv::Point2f S0(0.0, 0.0);
+  cv::Point2f S1((float)cam_size.width, 0.0);
+  cv::Point2f S2((float)cam_size.width, (float)cam_size.height);
+  cv::Point2f S3(0.0, (float)cam_size.height);
+  src_pts[0] = S0;
+  src_pts[1] = S1;
+  src_pts[2] = S2;
+  src_pts[3] = S3;
+
+  /* find transform from reference angle */
+  float warp_factor = 90.0 / m_declination;
+  cv::Size dsize(cam_size.width * warp_factor, cam_size.height);
+  cv::Point2f D0(0.0, 0.0);
+  cv::Point2f D1((float)dsize.width, 0.0);
+  cv::Point2f D2(((float)dsize.width / 2) + ((float)cam_size.width / 2), (float)dsize.height);
+  cv::Point2f D3(((float)dsize.width / 2) - ((float)cam_size.width / 2), (float)dsize.height);
+  dst_pts[0] = D0;
+  dst_pts[1] = D1;
+  dst_pts[2] = D2;
+  dst_pts[3] = D3;
+
+  /* generate transform matrix */
+  cv::Mat M = cv::getPerspectiveTransform(src_pts, dst_pts);
+  M.convertTo(M, CV_32F);
+
+  /* apply transform matrix */
+  cv::warpPerspective(m_frame_blur, m_warp_blur, M, dsize);
+  cv::warpPerspective(m_depth, m_depth, M, dsize);
 }
 
 /****************************************************************************

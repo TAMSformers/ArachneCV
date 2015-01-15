@@ -84,17 +84,14 @@ void find_scoring_zones(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<
 
   int debug_color[3] = {255, 255, 255};
 
-  /* TODO This is buggy and will change. */
   /* determine distance to each target*/
   if (!depth.empty()) {
-    // Requires centers to be on frame. Warp coords to fix this.
-    //warp_coords(r_targets, warp.size(), frame.size());
-    pix_to_ft_depth(r_targets, depth, depth_correction, hfov, vfov);
-    annotate_frame(r_targets, frame, debug_color, pix_per_ft_x, pix_per_ft_y);
+    pix_to_ft_depth(r_targets, depth, depth_correction, pix_per_ft_x, pix_per_ft_y);
+    annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
   } else {
     // Requires centers to be on warp.
     pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
-    //annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
+    annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
   }
 
 }
