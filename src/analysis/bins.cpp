@@ -37,7 +37,7 @@ void find_bins(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> &
   /* screen for color fields above size threshold */
   std::vector<std::vector<cv::Point>> contours;
   for (int i = 0; i < all_contours.size(); i++) {
-    if (cv::contourArea(all_contours[i]) / (pix_per_ft_x * pix_per_ft_y) > 1) {
+    if (cv::contourArea(all_contours[i]) / (pix_per_ft_x * pix_per_ft_y) > .1) {
       contours.push_back(all_contours[i]);
     }
   }

@@ -30,7 +30,7 @@ void find_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> 
 
   /* filter out color fields below size threshold */
   std::vector<std::vector<cv::Point>> contours;
-  filter_color_fields(contours, all_contours, pix_per_ft_x, pix_per_ft_y, 0.1);
+  filter_color_fields(contours, all_contours, pix_per_ft_x, pix_per_ft_y, 0.2);
 
   /* determine geometric characteristics of color fields above size threshold */
 
@@ -46,11 +46,14 @@ void find_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> 
 
   add_color_fields_as_targets(r_targets, centers, type, orientations, angles);
 
+  int debug_color[3] = {128, 128, 0};
+
   /* determine distance to each target*/
   if (!depth.empty()) {
     pix_to_ft_depth(r_targets, depth, depth_correction, pix_per_ft_x, pix_per_ft_y);
   } else {
     pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
+    annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
   }
 }
 
