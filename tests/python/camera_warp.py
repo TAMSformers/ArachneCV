@@ -19,4 +19,4 @@ while (True):
     camera.findTargets()
     camera.showFrame()
 
-    print acv.mergeTargets(camera.getTargets(), [])
+    #print acv.mergeTargets(camera.getTargets(), [])

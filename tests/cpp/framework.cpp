@@ -5,7 +5,7 @@
  *
  *
  *
- * Currently unfinished. Don't actually run this one.
+ * Example for multiple cameras.
  *
  */
 

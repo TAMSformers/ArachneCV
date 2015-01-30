@@ -6,13 +6,14 @@ Written by David Hashe and Jacob Brunson
 
 ArachneCV is a Computer Vision library developed by FRC #5212 TAMSformers for use in the FIRST Robotics Competition. It extends OpenCV with a compact and well-documented API suitable for novice and expert programmers alike.
 
-Bindings are available to all languages supported by SWIG.
+C++ and Python bindings are available.
 
 ##Building ArachneCV
 
 ArachneCV uses CMake, a popular cross-platform build system. As such, it may be built on Linux, Mac, and Windows.
 
 To build ArachneCV, first make sure that OpenCV, SWIG, CMake, and a C++ compiler are present on your system.
+IMPORTANT: OpenCV must be built with OpenNI, CUDA, and ffmpeg support. The Ubuntu package has none of these.
 
 Next change into the ArachneCV directory and follow the instructions below.
 
@@ -26,13 +27,11 @@ Next change into the ArachneCV directory and follow the instructions below.
 
 ####Windows:
 
-*TODO* Idk how Windows works.
+Follow instructions for building CMake projects with your IDE.
 
 ##Developer Information
 
-ArachneCV is designed with the intent of binding to arbitrary high-level languages to make it equally accessible to FRC teams of all language backgrounds. This is done through SWIG. However, because SWIG only supports the C++ Standard Library and not OpenCV, proxy classes have been created to mediate between SWIG and OpenCV. These classes are specified in ArachneCV.cpp and ArachneCV.hpp.
-
-Furthermore, all internal functions and classes are prefixed "acv".
+ArachneCV is designed with the intent of binding to arbitrary high-level languages to make it equally accessible to FRC teams of all language backgrounds. This is done through SWIG.
 
 ArachneCV documentation is generated through Doxygen.
 

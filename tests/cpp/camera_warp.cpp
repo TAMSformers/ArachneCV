@@ -27,7 +27,7 @@ int main()
     camera0.findTargets();
     camera0.showFrame();
 
-    targets = acv::mergeTargets(camera0.getTargets(), empty);
+    //targets = acv::mergeTargets(camera0.getTargets(), empty);
   }
   return 0;
 }

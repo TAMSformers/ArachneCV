@@ -1,12 +1,28 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+ * This is ArachneCV, a computer vision library for the FIRST        *
+ * Robotics Competition. Source hosted at                            *
+ * https://github.com/tamsformers/ArachneCV                          *
+ *                                                                   *
+ * Copyright 2014, 2015 by David Hashe and Jacob Brunson.            *
+ *                                                                   *
+ * This program is free software; you can redistribute it and/or     *
+ * modify it under the terms of the GNU General Public License as    *
+ * published by the Free Software Foundation - version 3 or          *
+ * (at your option) any later version.                               *
+ *                                                                   *
+ * This program is distributed in the hope that it will be useful,   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     *
+ * GNU General Public License in file COPYING for more details.      *
+ *                                                                   *
+ * You should have received a copy of the GNU General Public         *
+ * License along with this program; if not, write to the Free        *
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,       *
+ * Boston, MA 02111, USA.                                            *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /*
- * Arachne CV
- *
- * Written by David Hashe and Jacob Brunson
- *
- *
- *
  * This file implements the camera framework.
- *
  */
 
 #include <vector>
@@ -198,7 +214,7 @@ void WarpCamera::findTargets()
   find_yellow_totes(m_frame_blur, m_warp_blur, cv::Mat(), yellow_totes, m_effective_height, 0.0, m_hfov, m_vfov);
 
   std::vector<Target> gray_totes;
-  find_gray_totes(m_frame_blur, m_warp_blur, cv::Mat(), gray_totes, m_effective_height, 0.0, m_hfov, m_vfov);
+  //find_gray_totes(m_frame_blur, m_warp_blur, cv::Mat(), gray_totes, m_effective_height, 0.0, m_hfov, m_vfov);
 
   /* Debugging */
   /*int bins_color[3] = {0, 0, 255};
@@ -286,7 +302,7 @@ void DepthCamera::findTargets()
   find_yellow_totes(m_frame_blur, m_warp_blur, m_depth, yellow_totes, m_effective_height, m_depth_correction, m_hfov, m_vfov);
 
   std::vector<Target> gray_totes;
-  find_gray_totes(m_frame_blur, m_warp_blur, m_depth, gray_totes, m_effective_height, m_depth_correction, m_hfov, m_vfov);
+  //find_gray_totes(m_frame_blur, m_warp_blur, m_depth, gray_totes, m_effective_height, m_depth_correction, m_hfov, m_vfov);
 
   /* Convert target coordinates (which are with respect to the camera) to be with respect to the robot. */
   reorient_targets(bins, m_coords, m_rotation);
