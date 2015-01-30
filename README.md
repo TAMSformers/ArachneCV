@@ -6,6 +6,8 @@ Written by David Hashe and Jacob Brunson
 
 ArachneCV is a Computer Vision library developed by FRC #5212 TAMSformers for use in the FIRST Robotics Competition. It extends OpenCV with a compact and well-documented API suitable for novice and expert programmers alike.
 
+ArachneCV is designed to determine the locations of FRC game objects (bins, noodles, scoring zones, and totes) relative to the robot by using color field detection. It uses the depth-sensing capabilities of OpenNI-enabled cameras where possible to precisely determine position, and falls back to trig approximations of distance for basic cameras. Use of a CUDA-enabled GPU is recommended for best performance, but ArachneCV will fall back to the CPU if necessary.
+
 C++ and Python bindings are available.
 
 ##Building ArachneCV
@@ -34,6 +36,8 @@ Follow instructions for building CMake projects with your IDE.
 ArachneCV is designed with the intent of binding to arbitrary high-level languages to make it equally accessible to FRC teams of all language backgrounds. This is done through SWIG.
 
 ArachneCV documentation is generated through Doxygen.
+
+Implementations of the Camera, DepthCamera, WarpCamera and Target classes live in the src directory. The functions used to search images for objects live in the src/analysis directory. Language bindings live in the src/swig directory.
 
 ##Name Explanation
 
