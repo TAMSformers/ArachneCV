@@ -32,6 +32,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/gpu/gpu.hpp>
 
+#include <libfreenect2/libfreenect2.hpp>
+#include <libfreenect2/frame_listener_impl.h>
+
 #include "camera.hpp"
 #include "targets.hpp"
 #include "analysis/analysis.hpp"
@@ -272,9 +275,16 @@ DepthCamera::DepthCamera(int cam_num, double coords[3], int declination, int rot
   m_rotation = rotation;
 
   /* initialize capture */
-  m_capture = cam_num;
-  if (!m_capture.isOpened())
+  //m_capture = cam_num;
+  //if (!m_capture.isOpened())
+  //  exit(1);
+  
+  libfreenect2::Freenect2 freenect2;
+  m_capture = freenect2.openDefaultDevice();
+  if(!m_capture) {
     exit(1);
+  }
+  m_capture->start();
 }
 
 void DepthCamera::getFrame()
@@ -282,9 +292,18 @@ void DepthCamera::getFrame()
   /* Clear targets from last frame */
   clear_targets(m_targets);
 
-  m_capture.grab();
-  m_capture.retrieve(m_depth, CV_CAP_OPENNI_DEPTH_MAP);
-  m_capture.retrieve(m_frame, CV_CAP_OPENNI_BGR_IMAGE);
+  libfreenect2::FrameMap frames;
+
+  libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
+  //libfreenect2::Frame *ir = frames[libfreenect2::Frame::Ir];
+  libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
+
+  m_frame = cv::Mat(rgb->height, rgb->width, CV_8UC3, rgb->data);
+  m_depth = cv::Mat(depth->height, depth->width, CV_32FC1, depth->data);
+
+  //m_capture.grab();
+  //m_capture.retrieve(m_depth, CV_CAP_OPENNI_DEPTH_MAP);
+  //m_capture.retrieve(m_frame, CV_CAP_OPENNI_BGR_IMAGE);
 }
 
 void DepthCamera::findTargets()

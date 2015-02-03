@@ -30,6 +30,9 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <libfreenect2/libfreenect2.hpp>
+#include <libfreenect2/frame_listener_impl.h>
+
 #include "camera.hpp"
 #include "targets.hpp"
 #include "analysis/analysis.hpp"

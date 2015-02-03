@@ -35,6 +35,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/gpu/gpu.hpp>
 
+#include <libfreenect2/libfreenect2.hpp>
+
 #include "analysis/analysis.hpp"
 #include "targets.hpp"
 
@@ -180,6 +182,11 @@ class WarpCamera : public Camera
 class DepthCamera : public Camera
 {
   protected:
+
+    /**
+     * Video capture.
+     */
+    libfreenect2::Freenect2Device *m_capture;
 
     /**
      * Current depth sensor frame from video stream.

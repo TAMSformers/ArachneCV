@@ -29,4 +29,4 @@ set(ArachneCV_VERSION_MAJOR 0)
 set(ArachneCV_VERSION_MINOR 3)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+#add_subdirectory(tests)
