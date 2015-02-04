@@ -16,16 +16,19 @@ add_dependencies(tests ArachneCV)
 
 add_executable(camera_warp camera_warp.cpp)
 add_executable(image_warp image_warp.cpp)
+add_executable(kinect kinect.cpp)
 
 add_dependencies(camera_warp tests)
 add_dependencies(image_warp tests)
+add_dependencies(kinect tests)
 
 find_package(OpenCV REQUIRED)
-find_package(freenect2 REQUIRED)
 
 target_link_libraries(camera_warp ArachneCV ${OpenCV_LIBS})
 target_link_libraries(image_warp ArachneCV ${OpenCV_LIBS})
-target_link_libraries(camera_warp ${freenect2_LIBS})
-target_link_libraries(image_warp ${freenect2_LIBS})
+target_link_libraries(kinect ArachneCV ${OpenCV_LIBS})
+target_link_libraries(camera_warp freenect2)
+target_link_libraries(image_warp freenect2)
+target_link_libraries(kinect freenect2)
 
 endif(OUTPUT_NATIVE)

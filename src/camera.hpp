@@ -36,6 +36,7 @@
 #include <opencv2/gpu/gpu.hpp>
 
 #include <libfreenect2/libfreenect2.hpp>
+#include <libfreenect2/frame_listener_impl.h>
 
 #include "analysis/analysis.hpp"
 #include "targets.hpp"
@@ -182,6 +183,13 @@ class WarpCamera : public Camera
 class DepthCamera : public Camera
 {
   protected:
+
+    /**
+     * Kinect access objects.
+     */
+    libfreenect2::Freenect2 m_freenect2;
+    libfreenect2::SyncMultiFrameListener *m_listener;
+    libfreenect2::FrameMap m_frames;
 
     /**
      * Video capture.

@@ -20,6 +20,9 @@ int main()
 {
     std::cout << "Hello world" << std::endl;
     open();
+    cv::Mat frame = getFrames()[0];
+    cv::imshow("test", frame);
+    cv::waitKey(27);
     return 0;
 }
 

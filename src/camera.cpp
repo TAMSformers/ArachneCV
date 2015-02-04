@@ -34,6 +34,7 @@
 
 #include <libfreenect2/libfreenect2.hpp>
 #include <libfreenect2/frame_listener_impl.h>
+#include <libfreenect2/threading.h>
 
 #include "camera.hpp"
 #include "targets.hpp"
@@ -65,6 +66,8 @@ void Camera::showFrame()
   //char frame_name[10];
   //sprintf(frame_name, "Camera %d", m_cam_num);
   //cv::imshow(frame_name, m_frame);
+  
+  std::cout << "Debugging is fun!!!1!!1!!!1!" << std::endl;
 
   char frame_name[10];
   sprintf(frame_name, "Camera %d", m_cam_num);
@@ -279,11 +282,19 @@ DepthCamera::DepthCamera(int cam_num, double coords[3], int declination, int rot
   //if (!m_capture.isOpened())
   //  exit(1);
   
-  libfreenect2::Freenect2 freenect2;
-  m_capture = freenect2.openDefaultDevice();
-  if(!m_capture) {
+  m_capture = m_freenect2.openDefaultDevice();
+    
+  if (m_capture == 0) {
     exit(1);
   }
+
+  m_listener = new libfreenect2::SyncMultiFrameListener(
+       libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
+  
+  //m_listener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
+
+  m_capture->setColorFrameListener(m_listener);
+  m_capture->setIrAndDepthFrameListener(m_listener);
   m_capture->start();
 }
 
@@ -292,18 +303,25 @@ void DepthCamera::getFrame()
   /* Clear targets from last frame */
   clear_targets(m_targets);
 
-  libfreenect2::FrameMap frames;
-
-  libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
-  //libfreenect2::Frame *ir = frames[libfreenect2::Frame::Ir];
-  libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
-
-  m_frame = cv::Mat(rgb->height, rgb->width, CV_8UC3, rgb->data);
-  m_depth = cv::Mat(depth->height, depth->width, CV_32FC1, depth->data);
-
   //m_capture.grab();
   //m_capture.retrieve(m_depth, CV_CAP_OPENNI_DEPTH_MAP);
   //m_capture.retrieve(m_frame, CV_CAP_OPENNI_BGR_IMAGE);
+
+  std::cout << "Debugging is radical!!!1!!1!!!1!" << std::endl;
+
+  m_listener->waitForNewFrame(m_frames);
+
+  std::cout << "Debugging is sweet!!!1!!1!!!1!" << std::endl;
+
+  libfreenect2::Frame *rgb = m_frames[libfreenect2::Frame::Color];
+  libfreenect2::Frame *depth = m_frames[libfreenect2::Frame::Depth];
+
+  m_frame = cv::Mat(rgb->height, rgb->width, CV_8UC3, rgb->data);
+  m_depth = cv::Mat(depth->height, depth->width, CV_32FC1, depth->data) / 4500.0f;
+
+  m_listener->release(m_frames);
+
+  std::cout << "Debugging is awesome!!!1!!1!!!1!" << std::endl;
 }
 
 void DepthCamera::findTargets()
