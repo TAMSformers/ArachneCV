@@ -21,7 +21,6 @@ add_dependencies(camera_warp tests)
 add_dependencies(image_warp tests)
 
 find_package(OpenCV REQUIRED)
-find_package(freenect2 REQUIRED)
 
 target_link_libraries(camera_warp ArachneCV ${OpenCV_LIBS})
 target_link_libraries(image_warp ArachneCV ${OpenCV_LIBS})

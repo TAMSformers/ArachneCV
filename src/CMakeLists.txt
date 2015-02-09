@@ -57,9 +57,6 @@ add_library(ArachneCV
 find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
 
-find_package(freenect2 REQUIRED)
-target_link_libraries(ArachneCV ${freenect2_LIBS})
-
 install(TARGETS ArachneCV DESTINATION lib)
 install(FILES ArachneCV.hpp camera.hpp targets.hpp DESTINATION "include/ArachneCV")
 install(FILES analysis/analysis.hpp DESTINATION "include/ArachneCV/analysis")
@@ -78,9 +75,6 @@ include(${SWIG_USE_FILE})
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_PATH})
-
-find_package(freenect2 REQUIRED)
-target_link_libraries(ArachneCV ${freenect2_LIBS})
 
 set(CMAKE_SWIG_FLAGS "")
 
