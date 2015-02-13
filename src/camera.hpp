@@ -1,4 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+
  * This is ArachneCV, a computer vision library for the FIRST        *
  * Robotics Competition. Source hosted at                            *
  * https://github.com/tamsformers/ArachneCV                          *
@@ -51,8 +52,7 @@ class Camera
   protected:
 
     /**
-     * Camera number. An internal webcam, if present, is usually 0. Set to -1
-     * if Camera is initialized with a video file.
+     * Camera number. An internal webcam, if present, is usually 0.
      */
     int m_cam_num;
 
@@ -84,51 +84,27 @@ class Camera
     int m_vfov;
 
     /**
-     * Effective height of the camera view when warped.
+     * When the image is warped, the camera appears to be at a lower
+     * height. This is important for image analysis calculations.
      */
     double m_effective_height;
 
     /**
-     * Vector of all targets (balls, robots, etc.) found in current frame.
+     * Vector of all targets (bins, totes, etc.) found in current frame.
      */
     std::vector<Target> m_targets;
-
-    /**
-     * Video stream from camera or file.
-     */
-    cv::VideoCapture m_capture;
-
-    /**
-     * Current unaltered frame from video stream.
-     */
-    cv::Mat m_frame;
-
-    /**
-     * Current blurred frame from video stream.
-     */
-    cv::Mat m_frame_blur;
-
-    /**
-     * Current blurred and warped frame from video stream.
-     */
-    cv::Mat m_warp_blur;
 
   public:
 
     /**
-     * Retrieve next frame from stream.
+     * Retrieve next image from stream.
      */
-    void getFrame();
+    void getNext();
 
     /**
-     * Creates a window if not opened and shows the current frame.
+     * Process current frame to locate targets (bins, totes, etc.).
      */
-    void showFrame();
-
-    /**
-     * Preprocess current frame;
-     */
-    void cvtAndBlur();
+    void findTargets();
 
     /**
      * Retrieve targets stored internally by findTargets().
@@ -142,6 +118,31 @@ class Camera
 class WarpCamera : public Camera
 {
   protected:
+
+    /**
+     * OpenCV video stream.
+     */
+    cv::VideoCapture m_capture;
+
+    /**
+     * Current unaltered frame from video stream.
+     */
+    cv::Mat m_frame;
+
+    /**
+     * Current blurred frame from video stream.
+     */
+    cv::Mat m_blurred_frame;
+
+    /**
+     * Current blurred and warped frame from video stream.
+     */
+    cv::Mat m_warped_blurred_frame;
+
+    /**
+     * Apply image preprocessing.
+     */
+    void process();
 
   public:
 
@@ -157,39 +158,58 @@ class WarpCamera : public Camera
     WarpCamera(int cam_num, double coords[3], int declination, int rotation, int hfov, int vfov);
 
     /**
+     * Retrieve next image from stream.
+     */
+    void getNext();
+
+    /**
+     * Display current unaltered frame.
+     */
+    void showFrame();
+
+    /**
+     * Display current blurred frame.
+     */
+    void showBlurredFrame();
+
+    /**
+     * Display current warped, blurred frame.
+     */
+    void showWarpedBlurredFrame();
+
+    /**
      * Retrieve next frame from an image, ignoring the stream. Useful for
      * debugging.
      *
      * @param[in] image Image file path. Relative or absolute.
      */
-    void getFrameFromImage(std::string image);
+    void getNextFromImage(std::string image);
 
     /**
-     * Warp current frame to generate overhead view.
-     */
-    void warpPerspective();
-
-    /**
-     * Process current frame to locate targets (balls, robots, etc.).
-     * Stores results internally.
+     * Process current frame to locate targets (bins, totes, etc.).
      */
     void findTargets();
 };
 
 /**
- * OpenNI aware dual-channel camera.
+ * Kinect Camera
  */
 class DepthCamera : public Camera
 {
   protected:
 
     /**
-     * Video capture.
+     * Libfreenect3 video stream.
      */
-    libfreenect2::Freenect2Device *m_capture;
+    libfreenect2::Freenect2Device *m_kinect;
 
     /**
-     * Current depth sensor frame from video stream.
+     * Current color frame from video stream.
+     */
+    cv::Mat m_color;
+
+    /**
+     * Current depth frame from video stream.
      */
     cv::Mat m_depth;
 
@@ -197,6 +217,11 @@ class DepthCamera : public Camera
      * Correction for depth map due to camera declination.
      */
     double m_depth_correction;
+
+    /**
+     * Apply image preprocessing.
+     */
+    void process();
 
   public:
 
@@ -214,18 +239,33 @@ class DepthCamera : public Camera
     /**
      * Retrieve next frame from stream.
      */
-    void getFrame();
+    void getNext();
 
     /**
-     * Warp current frame to generate overhead view.
+     * Process current frame to locate targets (bins, totes, etc.).
+     *
+     * @param[in] points      Human-provided points to distinguish totes.
      */
-    void warpPerspective();
+    void findTargets(std::vector<cv::Point> points);
 
     /**
-     * Process current frame to locate targets (balls, robots, etc.).
-     * Stores results internally.
+     * Display current color frame.
      */
-    void findTargets();
+    void showColor();
+
+    /**
+     * Display current depth frame.
+     */
+    void showDepth();
+
+    /**
+     * Retrieve next frame from an image, ignoring the stream. Useful for
+     * debugging.
+     *
+     * @param[in] image Image file path. Relative or absolute.
+     */
+    void getNextFromImage(std::string color, std::string depth);
+
 };
 
 }

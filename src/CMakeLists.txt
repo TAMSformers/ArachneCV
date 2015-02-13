@@ -52,10 +52,13 @@ add_library(ArachneCV
   analysis/noodles.cpp
   analysis/scoring_zones.cpp
   analysis/totes.cpp
+  analysis/totes_depth.cpp
 )
 
 find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
+
+target_link_libraries(ArachneCV freenect2 usb-1.0)
 
 install(TARGETS ArachneCV DESTINATION lib)
 install(FILES ArachneCV.hpp camera.hpp targets.hpp DESTINATION "include/ArachneCV")
@@ -75,6 +78,8 @@ include(${SWIG_USE_FILE})
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_PATH})
+
+target_link_libraries(ArachneCV freenect2 usb-1.0)
 
 set(CMAKE_SWIG_FLAGS "")
 

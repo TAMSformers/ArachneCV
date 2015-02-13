@@ -114,7 +114,7 @@ void pix_to_ft_warp(std::vector<Target> &r_targets, cv::Size warp_size, int pix_
   }
 }
 
-void pix_to_ft_depth(std::vector<Target> &r_targets, cv::Mat depth, double depth_correction, int pix_per_ft_x, int pix_per_ft_y)
+void adjust_depth(std::vector<Target> &r_targets, cv::Mat depth, double depth_correction, int pix_per_ft_x, int pix_per_ft_y)
 {
   for (int i = 0; i < r_targets.size(); i++) {
     double tmp_coords[3];

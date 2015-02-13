@@ -93,15 +93,9 @@ void find_bins(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> &
   int debug_color[3] = {0, 0, 255};
 
   /* determine distance to each target*/
-  if (!depth.empty()) {
-    // Requires centers to be on warp.
-    pix_to_ft_depth(r_targets, depth, depth_correction, pix_per_ft_x, pix_per_ft_y);
-    annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
-  } else {
-    // Requires centers to be on warp.
-    pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
-    annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
-  }
+  // Requires centers to be on warp.
+  pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
+  annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
 
 }
 

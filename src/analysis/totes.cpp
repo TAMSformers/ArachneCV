@@ -65,12 +65,8 @@ void find_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> 
   int debug_color[3] = {128, 128, 0};
 
   /* determine distance to each target*/
-  if (!depth.empty()) {
-    pix_to_ft_depth(r_targets, depth, depth_correction, pix_per_ft_x, pix_per_ft_y);
-  } else {
-    pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
-    //annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
-  }
+  pix_to_ft_warp(r_targets, warp.size(), pix_per_ft_x, pix_per_ft_y);
+  annotate_frame(r_targets, warp, debug_color, pix_per_ft_x, pix_per_ft_y);
 }
 
 void find_yellow_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth, std::vector<Target> &r_targets, double effective_height, double depth_correction, int hfov, int vfov)

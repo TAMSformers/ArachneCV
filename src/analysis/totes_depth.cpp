@@ -22,41 +22,38 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
- * Object-finding algorithms
+ * Depth tote-finding algorithms
  */
 
-#ifndef __ARACHNECV_IMAGE_ANALYSIS__
-#define __ARACHNECV_IMAGE_ANALYSIS__
-
 #include <opencv2/opencv.hpp>
+#include <cmath>
 
+#include "analysis.hpp"
+#include "analysis_helper.hpp"
 #include "../targets.hpp"
 
 namespace acv {
 
-void find_bins(cv::Mat frame, cv::Mat warp, cv::Mat depth,
-               std::vector<Target> &r_targets, double effective_height,
-               double depth_correction, int hfov, int vfov);
+// Takes color image and set of points provided by Python, outputs relative
+// position and orientation
+void find_totes_depth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets, std::vector<cv::Point> points, double effective_height, int hfov, int vfov)
+{
+  // TODO Separate image into depth layers and discard bottom layer.
+  // TODO AND depth with color.
+  // TODO Apply watershed to color.
+  // TODO Get level for each tote.
+  // TODO Get orientation for each tote. <-- Both might go into orientation.
 
-void find_noodles(cv::Mat frame, cv::Mat warp, cv::Mat depth,
-               std::vector<Target> &r_targets, double effective_height,
-               double depth_correction, int hfov, int vfov);
-
-void find_scoring_zones(cv::Mat frame, cv::Mat warp, cv::Mat depth,
-               std::vector<Target> &r_targets, double effective_height,
-               double depth_correction, int hfov, int vfov);
-
-void find_yellow_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth,
-               std::vector<Target> &r_targets, double effective_height,
-               double depth_correction, int hfov, int vfov);
-
-void find_gray_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth,
-               std::vector<Target> &r_targets, double effective_height,
-               double depth_correction, int hfov, int vfov);
-
-void find_totes_depth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets,
-               std::vector<cv::Point> points, double effective_height, int hfov, int vfov);
-
+  int height = depth.size().height;
+  int width = depth.size().width;
+  cv::Mat markers(height, width, CV_32F);
+  //cv::Mat markers_vis(markers);
+  for (int i = 0; i < points.size(); i++) {
+      cv::Scalar color(i, i*100, i);
+      //cv::circle(markers_vis, points[i], 1, color, 20);
+      cv::circle(markers, points[i], 1, color, 20);
+  }
+  cv::watershed(frame, markers);
 }
 
-#endif
+}

@@ -69,13 +69,7 @@ void pix_to_ft_warp(std::vector<Target> &r_targets, cv::Size warp_size, int pix_
 /**
  * Convert coordinates from feet to pixels with depth info.
  */
-void pix_to_ft_depth(std::vector<Target> &r_targets, cv::Mat depth, double effective_height, int hfov, int vfov);
-
-/**
- * Warp the perspective of Targets from in_size to out_size.
- */
-void warp_coords(std::vector<Target> &r_targets, cv::Size in_size, cv::Size out_size);
-
+void adjust_depth(std::vector<Target> &r_targets, cv::Mat depth, double effective_height, int hfov, int vfov);
 
 /**
  * Annotate frame with debug information.
