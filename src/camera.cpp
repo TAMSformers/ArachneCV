@@ -292,7 +292,7 @@ void DepthCamera::getNextFromImage(std::string color, std::string depth)
 void DepthCamera::findTargets(std::vector<cv::Point> points)
 {
   std::vector<Target> totes;
-  find_totes_depth(m_color, m_depth, totes, points, m_effective_height, m_hfov, m_vfov);
+  find_totes_depth(m_color, m_depth, totes, points, m_depth_correction, m_effective_height, m_hfov, m_vfov);
 
   /* Convert target coordinates (which are with respect to the camera) to be with respect to the robot. */
   //reorient_targets(bins, m_coords, m_rotation);

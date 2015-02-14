@@ -21,11 +21,9 @@ int main()
 
   while (true)
   {
-    camera0.getFrame();
-    camera0.cvtAndBlur();
-    camera0.warpPerspective();
+    camera0.getNext();
     camera0.findTargets();
-    camera0.showFrame();
+    camera0.showWarpedBlurredFrame();
 
     //targets = acv::mergeTargets(camera0.getTargets(), empty);
   }

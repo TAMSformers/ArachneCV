@@ -27,11 +27,9 @@ int main(int argc, char *argv[])
   //for (int i = 0; i < 50; i++)
   while (true)
   {
-    camera.getFrameFromImage(argv[1]);
-    camera.cvtAndBlur();
-    camera.warpPerspective();
+    camera.getNextFromImage(argv[1]);
     camera.findTargets();
-    camera.showFrame();
+    camera.showWarpedBlurredFrame();
 
     //targets = acv::mergeTargets(camera.getTargets(), empty);
   }

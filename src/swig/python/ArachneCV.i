@@ -32,7 +32,6 @@ using acv::Target;
 %}
 
 %typemap(in) double[3] (double temp[3]) {
-  int i;
   if (!PySequence_Check($input)) {
     PyErr_SetString(PyExc_ValueError,"Expected a sequence");
     return NULL;
@@ -41,7 +40,7 @@ using acv::Target;
     PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected 3 elements");
     return NULL;
   }
-  for (i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     PyObject *o = PySequence_GetItem($input,i);
     if (PyNumber_Check(o)) {
       temp[i] = (double) PyFloat_AsDouble(o);
@@ -53,6 +52,28 @@ using acv::Target;
   $1 = temp;
 }
 
+%typemap(in) std::vector<cv::Point> (std::vector<cv::Point> points) {
+  if (!PySequence_Check($input)) {
+    PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+    return NULL;
+  }
+  int num_points = PySequence_Length($input);
+  for (int i = 0; i < num_points; i++) {
+    if (!PySequence_Check(PySequence_GetItem($input,i))) {
+      PyErr_SetString(PyExc_ValueError,"Each element must be a sequence");
+      return NULL;
+    }
+    if (PySequence_Length(PySequence_GetItem($input,i)) != 2) {
+      PyErr_SetString(PyExc_ValueError,"Each element must be of length 2");
+      return NULL;
+    }
+    int x = PyInt_AsLong(PySequence_GetItem(PySequence_GetItem($input,i),0));
+    int y = PyInt_AsLong(PySequence_GetItem(PySequence_GetItem($input,i),1));
+    cv::Point p(x,y);
+    points.push_back(p);
+  }
+  $1 = points;
+}
 /*
 %typemap(out) double[3] {
   $result = PyList_New(3);

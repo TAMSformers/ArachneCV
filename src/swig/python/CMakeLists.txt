@@ -45,8 +45,10 @@ swig_add_module(ArachneCV python ArachneCV.i
   ../../analysis/noodles.cpp
   ../../analysis/scoring_zones.cpp
   ../../analysis/totes.cpp
+  ../../analysis/totes_depth.cpp
 )
 swig_link_libraries(ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES})
+swig_link_libraries(ArachneCV freenect2 usb-1.0)
 
 #add_dependencies(ArachneCV patch)
 

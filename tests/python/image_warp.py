@@ -18,10 +18,8 @@ if len(sys.argv) != 2:
 camera = acv.WarpCamera(0, [0, 0, 15], 30, 0, 54, 38)
 
 while (True):
-    camera.getFrameFromImage(sys.argv[1])
-    camera.cvtAndBlur()
-    camera.warpPerspective()
+    camera.getNextFromImage(sys.argv[1])
     camera.findTargets()
-    camera.showFrame()
+    camera.showWarpedBlurredFrame()
 
     print acv.mergeTargets(camera.getTargets(), [])

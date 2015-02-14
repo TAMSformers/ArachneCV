@@ -22,7 +22,7 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
- * Tote-finding algorithms
+ * Tote-finding algorithms TODO Alter to only take saturation into account.
  */
 
 #include <opencv2/opencv.hpp>

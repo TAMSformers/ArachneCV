@@ -30,8 +30,10 @@ swig_add_module(ArachneCV_CSharp csharp ArachneCV.i
   ../../analysis/noodles.cpp
   ../../analysis/scoring_zones.cpp
   ../../analysis/totes.cpp
+  ../../analysis/totes_depth.cpp
 )
 set_target_properties(ArachneCV_CSharp PROPERTIES OUTPUT_NAME ArachneCV)
 
 swig_link_libraries(ArachneCV_CSharp ${OpenCV_LIBRARIES})
+swig_link_libraries(ArachneCV freenect2 usb-1.0)
 

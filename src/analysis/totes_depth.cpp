@@ -36,9 +36,25 @@ namespace acv {
 
 // Takes color image and set of points provided by Python, outputs relative
 // position and orientation
-void find_totes_depth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets, std::vector<cv::Point> points, double effective_height, int hfov, int vfov)
+void find_totes_depth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets, std::vector<cv::Point> points, double effective_height, double depth_correction, int hfov, int vfov)
 {
   // TODO Separate image into depth layers and discard bottom layer.
+  /*for (int i = 0; i < depth.size().width; i++) {
+    for (int j = 0; j < depth.size().height; j++) {
+      uchar tmp = int(depth.at<uchar>(i,j) - round((depth.size().height-j)*(CONSTANT/depth.size().height)))
+      if tmp >= 220:
+        depth[y, x] = 0
+      elif tmp >= 208 and tmp < 220:
+        depth[y, x] = 85
+      elif tmp >= 180 and tmp < 208:
+        depth[y, x] = 170
+      else:
+       depth[y, x] = 255
+    }
+  }
+    return depth*/
+
+
   // TODO AND depth with color.
   // TODO Apply watershed to color.
   // TODO Get level for each tote.

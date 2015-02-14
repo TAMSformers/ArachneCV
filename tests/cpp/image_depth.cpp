@@ -13,8 +13,8 @@
 
 int main(int argc, char *argv[])
 {
-  if (argc != 2) {
-    std::cout << "Usage: image_depth [input file]" << std::endl;
+  if (argc != 3) {
+    std::cout << "Usage: image_depth [color file] [depth file]" << std::endl;
     return 0;
   }
 
@@ -31,9 +31,10 @@ int main(int argc, char *argv[])
   //for (int i = 0; i < 50; i++)
   while (true)
   {
-    camera.getFrameFromImage(argv[1]);
-    camera.watershed(points);
-    camera.showFrame();
+    camera.getNextFromImage(argv[1], argv[2]);
+    camera.findTargets(points);
+    camera.showColor();
+    camera.showDepth();
 
     //targets = acv::mergeTargets(camera.getTargets(), empty);
   }
