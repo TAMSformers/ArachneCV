@@ -199,9 +199,10 @@ class DepthCamera : public Camera
   protected:
 
     /**
-     * Libfreenect3 video stream.
+     * OpenNI video stream.
      */
-    libfreenect2::Freenect2Device *m_kinect;
+    //libfreenect2::Freenect2Device *m_kinect;
+    cv::VideoCapture m_kinect;
 
     /**
      * Current color frame from video stream.

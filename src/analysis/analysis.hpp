@@ -54,7 +54,7 @@ void find_gray_totes(cv::Mat frame, cv::Mat warp, cv::Mat depth,
                std::vector<Target> &r_targets, double effective_height,
                double depth_correction, int hfov, int vfov);
 
-void find_totes_depth(cv::Mat frame, cv::Mat depth, std::vector<Target> &r_targets,
+void find_totes_depth(cv::Mat color, cv::Mat depth, std::vector<Target> &r_targets,
                std::vector<cv::Point> points, double effective_height,
                double depth_correction, int hfov, int vfov);
 

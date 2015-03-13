@@ -35,5 +35,5 @@ swig_add_module(ArachneCV_CSharp csharp ArachneCV.i
 set_target_properties(ArachneCV_CSharp PROPERTIES OUTPUT_NAME ArachneCV)
 
 swig_link_libraries(ArachneCV_CSharp ${OpenCV_LIBRARIES})
-swig_link_libraries(ArachneCV freenect2 usb-1.0)
+swig_link_libraries(ArachneCV)
 

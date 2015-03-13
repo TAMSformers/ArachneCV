@@ -58,7 +58,10 @@ add_library(ArachneCV
 find_package(OpenCV REQUIRED)
 target_link_libraries(ArachneCV ${OpenCV_LIBS})
 
-target_link_libraries(ArachneCV freenect2 usb-1.0)
+target_link_libraries(ArachneCV)
+
+add_test(NAME camera_warp COMMAND ../tests/cpp/camera_warp)
+add_test(NAME image_warp COMMAND ../tests/cpp/image_warp ../../media/kickoff/5.png)
 
 install(TARGETS ArachneCV DESTINATION lib)
 install(FILES ArachneCV.hpp camera.hpp targets.hpp DESTINATION "include/ArachneCV")
@@ -78,8 +81,6 @@ include(${SWIG_USE_FILE})
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_PATH})
-
-target_link_libraries(ArachneCV freenect2 usb-1.0)
 
 set(CMAKE_SWIG_FLAGS "")
 

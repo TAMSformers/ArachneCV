@@ -89,10 +89,11 @@ WarpCamera::WarpCamera(int cam_num, double coords[3], int declination, int rotat
   m_vfov = vfov;
   m_rotation = rotation;
 
-  /* initialize capture */
-  m_capture = cam_num;
-  if (!m_capture.isOpened())
+
+  m_capture = cam_num; /* initialize capture */
+  if (!m_capture.isOpened()) {
     exit(1);
+  }
 }
 
 void WarpCamera::process()
@@ -220,13 +221,17 @@ DepthCamera::DepthCamera(int cam_num, double coords[3], int declination, int rot
   m_effective_height = coords[2] * tan((90 - declination) * 3.1415 / 180);
   m_hfov = hfov;
   m_vfov = vfov;
-  m_rotation = rotation;
 
-  libfreenect2::Freenect2 freenect2;
-  m_kinect = freenect2.openDefaultDevice();
-  if(!m_kinect) {
+  m_kinect = cam_num; /* initialize camera */
+  if (!m_kinect.isOpened()) {
     exit(1);
   }
+
+  //libfreenect2::Freenect2 freenect2;
+  //m_kinect = freenect2.openDefaultDevice();
+  //if(!m_kinect) {
+  //  exit(1);
+  //}
 }
 
 void DepthCamera::process()
@@ -239,23 +244,27 @@ void DepthCamera::process()
 
 void DepthCamera::getNext()
 {
-  libfreenect2::Freenect2 freenect2;
-  m_kinect = freenect2.openDefaultDevice();
-  libfreenect2::SyncMultiFrameListener listener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
-  libfreenect2::FrameMap frames;
+  //libfreenect2::Freenect2 freenect2;
+  //m_kinect = freenect2.openDefaultDevice();
+  //libfreenect2::SyncMultiFrameListener listener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
+  //libfreenect2::FrameMap frames;
 
-  m_kinect->setColorFrameListener(&listener);
-  m_kinect->setIrAndDepthFrameListener(&listener);
-  m_kinect->start();
+  //m_kinect->setColorFrameListener(&listener);
+  //m_kinect->setIrAndDepthFrameListener(&listener);
+  //m_kinect->start();
 
-  listener.waitForNewFrame(frames);
-  libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
-  libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
+  //listener.waitForNewFrame(frames);
+  //libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
+  //libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
 
-  m_color = cv::Mat(rgb->height, rgb->width, CV_8UC3, rgb->data);
-  m_depth = cv::Mat(depth->height, depth->width, CV_32FC1, depth->data) / 4500.0f;
+  //m_color = cv::Mat(rgb->height, rgb->width, CV_8UC3, rgb->data);
+  //m_depth = cv::Mat(depth->height, depth->width, CV_32FC1, depth->data) / 4500.0f;
 
-  listener.release(frames);
+  //listener.release(frames);
+
+  m_kinect.grab();
+  m_kinect.retrieve(m_depth, CV_CAP_OPENNI_DEPTH_MAP);
+  m_kinect.retrieve(m_color, CV_CAP_OPENNI_BGR_IMAGE);
 
   process();
 }

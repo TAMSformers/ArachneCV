@@ -28,15 +28,14 @@ int main(int argc, char *argv[])
   points.push_back(cv::Point(320, 160));
   points.push_back(cv::Point(320, 300));
 
-  //for (int i = 0; i < 50; i++)
-  while (true)
-  {
-    camera.getNextFromImage(argv[1], argv[2]);
-    camera.findTargets(points);
-    camera.showColor();
-    camera.showDepth();
+  camera.getNextFromImage(argv[1], argv[2]);
+  camera.findTargets(points);
+  camera.showColor();
+  camera.showDepth();
 
-    //targets = acv::mergeTargets(camera.getTargets(), empty);
-  }
+  //targets = acv::mergeTargets(camera.getTargets(), empty);
+
+  cv::waitKey(0);
+
   return 0;
 }

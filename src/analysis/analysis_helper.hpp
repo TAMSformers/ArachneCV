@@ -57,7 +57,7 @@ void filter_color_fields(std::vector<std::vector<cv::Point>> &r_contours, std::v
 void find_centers_of_color_fields(std::vector<cv::Vec3f> &r_centers, std::vector<std::vector<cv::Point>> &r_contours);
 
 /**
- * Synthesis target characteristics into vector of Target.
+ * Synthesize target characteristics into vector of Target.
  */
 void add_color_fields_as_targets(std::vector<Target> &r_targets, std::vector<cv::Vec3f> coords, std::string type, std::vector<std::string> orientations, std::vector<double> angles);
 
@@ -67,7 +67,7 @@ void add_color_fields_as_targets(std::vector<Target> &r_targets, std::vector<cv:
 void pix_to_ft_warp(std::vector<Target> &r_targets, cv::Size warp_size, int pix_per_ft_x, int pix_per_ft_y);
 
 /**
- * Convert coordinates from feet to pixels with depth info.
+ * Correction function for depth images.
  */
 void adjust_depth(std::vector<Target> &r_targets, cv::Mat depth, double effective_height, int hfov, int vfov);
 

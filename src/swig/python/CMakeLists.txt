@@ -48,7 +48,10 @@ swig_add_module(ArachneCV python ArachneCV.i
   ../../analysis/totes_depth.cpp
 )
 swig_link_libraries(ArachneCV ${OpenCV_LIBRARIES} ${PYTHON_LIBRARIES})
-swig_link_libraries(ArachneCV freenect2 usb-1.0)
+swig_link_libraries(ArachneCV)
+
+add_test(NAME camera_warp COMMAND python ../../../tests/python/camera_warp.py)
+add_test(NAME image_warp COMMAND python ../../../tests/python/image_warp.py ../../../../media/kickoff/5.png)
 
 #add_dependencies(ArachneCV patch)
 

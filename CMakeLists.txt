@@ -25,6 +25,8 @@ cmake_minimum_required(VERSION 2.6)
 
 project(ArachneCV)
 
+enable_testing()
+
 set(ArachneCV_VERSION_MAJOR 0)
 set(ArachneCV_VERSION_MINOR 3)
 
